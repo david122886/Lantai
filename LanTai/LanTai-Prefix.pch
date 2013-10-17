@@ -1,0 +1,31 @@
+//
+// Prefix header for all source files of the 'LanTai' target in the 'LanTai' project
+//
+
+#import <Availability.h>
+
+#ifndef __IPHONE_5_0
+#warning "This project uses features only available in iOS SDK 5.0 and later."
+#endif
+
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+    #import <Foundation/Foundation.h>
+#import "MBProgressHUD.h"
+#import "AHAlertView.h"
+#import "Const.h"
+#import "Utils.h"
+#import "JSONKit.h"
+#import "STHTTPRequest.h"
+#import "Reachability.h"
+#import "DataService.h"
+#import "SVPullToRefresh.h"
+
+#endif
+
+
+#ifdef DEBUG
+#define DLog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
+#else
+#define DLog(...)
+#endif
