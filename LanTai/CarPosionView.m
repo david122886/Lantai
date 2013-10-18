@@ -47,7 +47,8 @@
         [self.titileBackView addSubview:self.posinIDLabel];
         
         self.posionDateImageView = [[UIImageView alloc] initWithFrame:CGRectZero];
-        self.posionDateImageView.backgroundColor = [UIColor blueColor];
+//        self.posionDateImageView.backgroundColor = [UIColor blueColor];
+        self.posionDateImageView.image = [UIImage imageNamed:@"clock.png"];
         [self.titileBackView addSubview:self.posionDateImageView];
         
         self.posinDateLabel = [[UILabel alloc] initWithFrame:CGRectZero];
@@ -100,11 +101,14 @@
     if (isEmpty) {
         [self.titileBackView setBackgroundColor:[UIColor clearColor]];
         self.carView.state = CARNOTHING;
+        self.serveNameLabel.text = nil;
         self.posinDateLabel.text = @"00:00";
+        self.serveNameLabel.text = nil;
     }else{
         [self.titileBackView setBackgroundColor:[UIColor yellowColor]];
         self.posinDateLabel.text = self.posionDate;
         self.carView.state = CARBEGINNING;
+        self.serveNameLabel.text = self.posionServeName;
     }
     [self.coverLabel setHidden:!isEmpty];
 }
@@ -117,10 +121,12 @@
 
 -(void)setCarObj:(CarObj*)car{
     if (car) {
-        self.isEmpty = NO;
+        
         self.carView.carNumber = car.carPlateNumber;
         self.carView.state = CARBEGINNING;
-        
+        self.posionDate = car.serviceStartTime;
+        self.posionServeName = car.serviceName;
+        self.isEmpty = NO;
     }else{
         self.isEmpty = YES;
     }

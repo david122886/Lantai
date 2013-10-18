@@ -202,7 +202,7 @@
         [self.view addSubview:hud];
     }
 }
-}
+
 
 #pragma mark - 刷卡支付，调用钱方
 - (BOOL)payPal{

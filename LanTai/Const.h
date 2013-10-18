@@ -9,7 +9,7 @@
 
 
 #define kHost @"http://192.168.0.112:3001/api"
-
+#define kNewPay @"/new_app_orders/pay_order"
 #define kService @"/new_app_orders/new_index_list"
 #define kMakeOrder @"/new_app_orders/make_order"
 #define kOrderinfo @"/new_app_orders/order_info"

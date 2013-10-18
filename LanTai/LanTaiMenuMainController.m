@@ -16,7 +16,8 @@
 #import "ServiceModel.h"
 #import "CarPosionView.h"
 
-#define CELL_WIDHT  200
+#define DEBUG 1
+#define CELL_WIDHT  250
 #define CELL_POSION_WIDHT  250
 #define CELL_HEIGHT 134
 #define CELL_PADDING 10
@@ -40,6 +41,7 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
+        //???????????????DDDFD
     }
     return self;
 }
@@ -157,6 +159,12 @@
         [MBProgressHUD hideHUDForView:self.view animated:YES];
     }
 }
+
+#if DEBUG
+-(void)viewWillAppear:(BOOL)animated{
+    
+}
+#else
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     if ([[Utils isExistenceNetwork] isEqualToString:@"NotReachable"]) {
@@ -169,6 +177,8 @@
         }
     }
 }
+#endif
+
 -(void )addRightnaviItemsWithImage:(NSString *)imageName {
     NSMutableArray *mycustomButtons = [NSMutableArray array];
     if (imageName != nil && ![imageName isEqualToString:@""]) {
@@ -219,7 +229,7 @@
     }
     for (int index = 0; index < [self.waittingCarsArr count]; index++) {
         CarCellView *view = [[CarCellView alloc] init];
-        view.frame = (CGRect){CELL_PADDING+(CELL_WIDHT+CELL_PADDING)*index,CELL_PADDING,CELL_WIDHT,CELL_HEIGHT};
+        view.frame = (CGRect){CELL_PADDING+(CELL_WIDHT+CELL_PADDING)*index,CELL_PADDING*2,CELL_WIDHT,CELL_HEIGHT-CELL_PADDING*4};
         view.tag = index;
         CarObj *obj = [self.waittingCarsArr objectAtIndex:index];
         view.carNumber = obj.carPlateNumber;
@@ -259,7 +269,7 @@
         CarObj *obj = [self.finishedCarsArr objectAtIndex:index];
         view.carNumber = obj.carPlateNumber;
         view.state = CARPAYING;
-        view.frame = (CGRect){CELL_PADDING+(CELL_WIDHT+CELL_PADDING)*index,CELL_PADDING,CELL_WIDHT,CELL_HEIGHT};
+        view.frame = (CGRect){CELL_PADDING+(CELL_WIDHT+CELL_PADDING)*index,CELL_PADDING*2,CELL_WIDHT,CELL_HEIGHT-CELL_PADDING*4};
         view.tag = index;
         view.delegate = self;
         [self.bottomLeftScrollView addSubview:view];
@@ -335,6 +345,34 @@
     
 }
 
+-(void)failureExchangeBeginningCarCellPosionFromIndex:(int)from toIndex:(int)to orFromCarObj:(CarObj*)fromObj toCarObj:(CarObj*)toObj{
+    [self.beginningCarsDic setValue:fromObj forKey:[NSString stringWithFormat:@"%d",from]];
+    [self.beginningCarsDic setValue:toObj forKey:[NSString stringWithFormat:@"%d",to]];
+    
+    CarPosionView *posion1 = [self.posionItemArr objectAtIndex:[self.stationArray indexOfObject:[NSString stringWithFormat:@"%d",from]]];
+    CarPosionView *posion2 = [self.posionItemArr objectAtIndex:[self.stationArray indexOfObject:[NSString stringWithFormat:@"%d",to]]];
+    [posion1 setCarObj:fromObj];
+    [posion2 setCarObj:toObj];////////////////david is good is not good
+}
+
+-(void)failureMoveCarCellFromBeginningScrollViewToBottomLeftScrollViewCellPosionFromIndex:(int)from toIndex:(int)to orCarObj:(CarObj*)fromObj{
+    CarPosionView *posion1 = [self.posionItemArr objectAtIndex:[self.stationArray indexOfObject:[NSString stringWithFormat:@"%d",from]]];
+    [posion1 setCarObj:fromObj];
+    [self.beginningCarsDic setValue:fromObj forKey:[NSString stringWithFormat:@"%d",from]];
+    [UIView animateWithDuration:0.5 animations:^{
+        for (UIView *subView in [self.bottomLeftScrollView subviews]) {
+            if ([subView isKindOfClass:[CarCellView class]]) {
+                subView.center = (CGPoint){subView.center.x - CGRectGetWidth(subView.frame),subView.center.y};
+            }
+        }
+    } completion:^(BOOL finished) {
+        if ([self.finishedCarsArr count] > 0) {
+            [self.finishedCarsArr removeObjectAtIndex:0];
+            [self setFinishedScrollViewContext];
+        }
+    }];
+}
+
 -(void)moveCarViewFromBeginningScrollViewIntoBottomRightScrollView:(CarCellView*)carView{
     //    NSLog(@"moveCarViewFromBeginningScrollViewIntoBottomRightScrollView:carViewTag:%d",carView.tag);
     CarObj *carObj = [self.beginningCarsDic objectForKey:[NSString stringWithFormat:@"%d",carView.posionID]];
@@ -347,7 +385,7 @@
     }
     for (int index = 0; index < [self.finishedCarsArr count]; index++) {
         CarCellView *view = [[CarCellView alloc] init];
-        view.frame = (CGRect){CELL_PADDING+(CELL_WIDHT+CELL_PADDING)*(index-1),CELL_PADDING,CELL_WIDHT,CELL_HEIGHT};
+        view.frame = (CGRect){CELL_PADDING+(CELL_WIDHT+CELL_PADDING)*(index-1),CELL_PADDING*2,CELL_WIDHT,CELL_HEIGHT-CELL_PADDING*4};
         view.tag = index;
         CarObj *obj = [self.finishedCarsArr objectAtIndex:index];
         view.carNumber = obj.carPlateNumber;
@@ -363,7 +401,7 @@
     [UIView animateWithDuration:0.5 animations:^{
         for (int index = 0; index < [self.finishedCarsArr count]; index++) {
             CarCellView *view = (CarCellView*)[self.bottomLeftScrollView viewWithTag:index];
-            view.frame = (CGRect){CELL_PADDING+(CELL_WIDHT+CELL_PADDING)*index,CELL_PADDING,CELL_WIDHT,CELL_HEIGHT};
+            view.frame = (CGRect){CELL_PADDING+(CELL_WIDHT+CELL_PADDING)*index,CELL_PADDING*2,CELL_WIDHT,CELL_HEIGHT-CELL_PADDING*4};
         }
         carView.frame = [self.bottomLeftScrollView convertRect:rect toView:self.leftBackgroundView];
     } completion:^(BOOL finished) {
@@ -374,36 +412,55 @@
         [self didMoveCarCellFromBeginningScrollViewToBottomLeftScrollViewCellPosionFromIndex:carView.posionID toIndex:0 orCarObj:carObj];
     }];
 }
-/*
- -(void)testController{
- for (int index = 0; index < 20; index++) {
- CarObj *obj = [[CarObj alloc] init];
- obj.carPlateNumber = [NSString stringWithFormat:@"EG%d",index];
- obj.carID = [NSString stringWithFormat:@"%d",index];
- obj.carPrice = 123.0;
- [self.waittingCarsArr addObject:obj];
- }
- for (int index = 0; index < self.stationArray.count; index++) {
- CarObj *obj = [[CarObj alloc] init];
- obj.carPlateNumber = [NSString stringWithFormat:@"EG%d",index];
- obj.carID = [NSString stringWithFormat:@"%d",index];
- obj.carPrice = 123.0;
- [self.beginningCarsDic setValue:obj forKey:[self.stationArray objectAtIndex:index]];
- }
- for (int index = 0; index < 20; index++) {
- CarObj *obj = [[CarObj alloc] init];
- obj.carPlateNumber = [NSString stringWithFormat:@"EG%d",index];
- obj.carID = [NSString stringWithFormat:@"%d",index];
- obj.carPrice = 123.0;
- [self.finishedCarsArr addObject:obj];
- }
- 
- for (int index = 0; index < 20; index++) {
- [self.serveItemsArr addObject:@"便捷洗车"];
- }
- }
- */
+#if DEBUG
+-(void)testController{
+    for (int index = 0; index < 6; index++) {
+        [self.stationArray addObject:[NSString stringWithFormat:@"%d",index]];
+    }
+    for (int index = 0; index < 20; index++) {
+        CarObj *obj = [[CarObj alloc] init];
+        obj.carPlateNumber = [NSString stringWithFormat:@"EG%d",index];
+        obj.carID = [NSString stringWithFormat:@"%d",index];
+        obj.serviceName = @"洗车";
+        [self.waittingCarsArr addObject:obj];
+    }
+    for (int index = 0; index < 6; index++) {
+        CarObj *obj = [[CarObj alloc] init];
+        obj.carPlateNumber = [NSString stringWithFormat:@"EG%d",index];
+        obj.carID = [NSString stringWithFormat:@"%d",index];
+        obj.serviceName = @"洗车";
+        [self.beginningCarsDic setValue:obj forKey:[self.stationArray objectAtIndex:index]];
+    }
+    for (int index = 0; index < 20; index++) {
+        CarObj *obj = [[CarObj alloc] init];
+        obj.carPlateNumber = [NSString stringWithFormat:@"EG%d",index];
+        obj.carID = [NSString stringWithFormat:@"%d",index];
+        obj.serviceName = @"洗车";
+        [self.finishedCarsArr addObject:obj];
+    }
+    
+    for (int index = 0; index < 20; index++) {
+        [self.serveItemsArr addObject:@"便捷洗车"];
+    }
+}
+#else
 
+#endif
+
+#if DEBUG
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    self.leftTopScrollView.tag = -1;
+    self.bottomLeftScrollView.tag = -1;
+    [self testController];
+    [self setBegningScrollViewContextWithPosionCount:self.stationArray];
+    [self setWaittingScrollViewContext];
+    [self setFinishedScrollViewContext];
+    [self moveCarIntoCarPosion];
+	// Do any additional setup after loading the view.
+}
+#else
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -464,6 +521,9 @@
     }];
     
 }
+
+#endif
+
 -(void)reloadArray:(NSNotification *)notification {
     NSDictionary *dic = [notification object];
     
@@ -502,6 +562,11 @@
 }
 
 #pragma mark CarCellViewDelegate 付款
+#if DEBUG
+-(void)carCellViewDidSelected:(CarCellView *)view{
+    NSLog(@"selectedCar:%@",view.carNumber);
+}
+#else
 -(void)carCellViewDidSelected:(CarCellView *)view{
     DLog(@"tag = %d",view.tag);
     CarObj *carObject = (CarObj *)[self.finishedCarsArr objectAtIndex:view.tag];
@@ -528,6 +593,7 @@
          ];
     }
 }
+#endif
 -(void)payMoney:(NSData *)data {
     id jsonObject=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
     if (jsonObject !=nil) {
@@ -644,7 +710,16 @@
     }
     return _posionItemArr;
 }
+-(NSMutableArray *)stationArray{
+    if (!_stationArray) {
+        _stationArray = [NSMutableArray array];
+    }
+    return _stationArray;
+}
 #pragma mark --
+
+- (IBAction)refreshServeItemsBtClicked:(id)sender {
+}
 
 - (IBAction)touchDragGesture:(UIPanGestureRecognizer *)sender {
     CGPoint point = [sender locationInView:self.leftBackgroundView];
@@ -695,6 +770,15 @@
 #pragma mark network
 //调整工位
 static NSString *work_order_id_station_id = nil;
+#if DEBUG
+-(void)didExchangeBeginningCarCellPosionFromIndex:(int)from toIndex:(int)to orFromCarObj:(CarObj*)fromObj toCarObj:(CarObj*)toObj{
+    double delayInSeconds = 1.0;
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+        [self failureExchangeBeginningCarCellPosionFromIndex:from toIndex:to orFromCarObj:fromObj toCarObj:toObj];
+    });
+}
+#else
 -(void)didExchangeBeginningCarCellPosionFromIndex:(int)from toIndex:(int)to orFromCarObj:(CarObj*)fromObj toCarObj:(CarObj*)toObj{
     if (toObj) {
         work_order_id_station_id = [NSString stringWithFormat:@"%@_%@,%@_%@",toObj.workOrderId,fromObj.stationId,fromObj.workOrderId,toObj.stationId];
@@ -727,6 +811,9 @@ static NSString *work_order_id_station_id = nil;
         }
     }
 }
+
+#endif
+
 -(void)selectStation:(NSData *)data {
     id jsonObject=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
     if (jsonObject !=nil) {
@@ -784,6 +871,15 @@ static NSString *work_order_id_station_id = nil;
 
 //施工完成
 static NSString *work_order_id = nil;
+#if DEBUG
+-(void)didMoveCarCellFromBeginningScrollViewToBottomLeftScrollViewCellPosionFromIndex:(int)from toIndex:(int)to orCarObj:(CarObj*)fromObj{
+    double delayInSeconds = 1.0;
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+        [self failureMoveCarCellFromBeginningScrollViewToBottomLeftScrollViewCellPosionFromIndex:from toIndex:to orCarObj:fromObj];
+    });
+}
+#else
 -(void)didMoveCarCellFromBeginningScrollViewToBottomLeftScrollViewCellPosionFromIndex:(int)from toIndex:(int)to orCarObj:(CarObj*)fromObj{
     if ([[Utils isExistenceNetwork] isEqualToString:@"NotReachable"]) {
         [Utils errorAlert:@"暂无网络!"];
@@ -809,6 +905,8 @@ static NSString *work_order_id = nil;
          ];
     }
 }
+#endif
+
 -(void)finishOrder:(NSData *)data {
     id jsonObject=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
     if (jsonObject !=nil) {

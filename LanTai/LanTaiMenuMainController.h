@@ -38,5 +38,6 @@
 //菊花
 @property (nonatomic,strong) MBProgressHUD *hud;
 
+- (IBAction)refreshServeItemsBtClicked:(id)sender;
 - (IBAction)touchDragGesture:(UIPanGestureRecognizer *)sender;
 @end
