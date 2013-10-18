@@ -10,6 +10,7 @@
 #import <CommonCrypto/CommonCrypto.h>
 #import "UIViewController+MJPopupViewController.h"
 #import <QuartzCore/QuartzCore.h>
+#import "CarObj.h"
 
 @interface PayStyleViewController ()
 
@@ -27,23 +28,43 @@
 @synthesize posView,txtPos;
 @synthesize posBtn,posLab,sureBtn;
 
+-(CarObj *)setAttributeWithDictionary:(NSDictionary *)result {
+    CarObj *carobject = [[CarObj alloc]init];
+    carobject.carID = [NSString stringWithFormat:@"%@",[result objectForKey:@"car_num_id"]];
+    carobject.carPlateNumber = [NSString stringWithFormat:@"%@",[result objectForKey:@"num"]];
+    carobject.orderId = [NSString stringWithFormat:@"%@",[result objectForKey:@"id"]];
+    if (![[result objectForKey:@"station_id"]isKindOfClass:[NSNull class]] && [result objectForKey:@"station_id"]!=nil) {
+        carobject.stationId =[NSString stringWithFormat:@"%@",[result objectForKey:@"station_id"]];
+    }
+    carobject.serviceName = [NSString stringWithFormat:@"%@",[result objectForKey:@"service_name"]];
+    carobject.lastTime = [NSString stringWithFormat:@"%@",[result objectForKey:@"cost_time"]];
+    carobject.workOrderId = [NSString stringWithFormat:@"%@",[result objectForKey:@"wo_id"]];
+    if (![[result objectForKey:@"wo_started_at"]isKindOfClass:[NSNull class]] && [result objectForKey:@"wo_started_at"]!=nil) {
+        carobject.serviceStartTime = [NSString stringWithFormat:@"%@",[result objectForKey:@"wo_started_at"]];
+    }
+    if (![[result objectForKey:@"wo_ended_at"]isKindOfClass:[NSNull class]] && [result objectForKey:@"wo_ended_at"]!=nil) {
+        carobject.serviceEndTime = [NSString stringWithFormat:@"%@",[result objectForKey:@"wo_ended_at"]];
+    }
+    return carobject;
+}
+
 #pragma mark - 支付
 -(void)payWithType {
-    STHTTPRequest *r  = [STHTTPRequest requestWithURLString:[NSString stringWithFormat:@"%@%@",kHost,kPay]];
+    STHTTPRequest *r  = [STHTTPRequest requestWithURLString:[NSString stringWithFormat:@"%@%@",kHost,kNewPay]];
     NSString *billing = @"1";
     if (self.billingBtn.isOn) {
         billing = @"1";
-    }else{	
+    }else{
         billing = @"0";
     }
     if (self.payType == 5) {
-        [r setPOSTDictionary:[NSDictionary dictionaryWithObjectsAndKeys:[order objectForKey:@"order_id"],@"order_id",[order objectForKey:@"is_please"],@"please",[DataService sharedService].store_id,@"store_id",billing,@"billing",[NSNumber numberWithInt:self.payType],@"pay_type",[NSNumber numberWithInt:1],@"is_free", nil]];
+        [r setPOSTDictionary:[NSDictionary dictionaryWithObjectsAndKeys:[order objectForKey:@"order_id"],@"order_id",[order objectForKey:@"is_please"],@"please",[DataService sharedService].store_id,@"store_id",billing,@"billing",[NSNumber numberWithInt:self.payType],@"pay_type",[NSNumber numberWithInt:1],@"is_free",[order objectForKey:@"prods"],@"prods", nil]];
     }else if (self.payType == 1) {
-        [r setPOSTDictionary:[NSDictionary dictionaryWithObjectsAndKeys:[order objectForKey:@"order_id"],@"order_id",[order objectForKey:@"is_please"],@"please",[DataService sharedService].store_id,@"store_id",billing,@"billing",[NSNumber numberWithInt:self.payType],@"pay_type",[NSNumber numberWithInt:0],@"is_free",[DataService sharedService].kPosAppId,@"appid", nil]];
+        [r setPOSTDictionary:[NSDictionary dictionaryWithObjectsAndKeys:[order objectForKey:@"order_id"],@"order_id",[order objectForKey:@"is_please"],@"please",[DataService sharedService].store_id,@"store_id",billing,@"billing",[NSNumber numberWithInt:self.payType],@"pay_type",[NSNumber numberWithInt:0],@"is_free",[DataService sharedService].kPosAppId,@"appid",[order objectForKey:@"prods"],@"prods", nil]];
     }else if (self.payType == 0){
-        [r setPOSTDictionary:[NSDictionary dictionaryWithObjectsAndKeys:[order objectForKey:@"order_id"],@"order_id",[order objectForKey:@"is_please"],@"please",[DataService sharedService].store_id,@"store_id",billing,@"billing",[NSNumber numberWithInt:self.payType],@"pay_type",[NSNumber numberWithInt:0],@"is_free", nil]];
+        [r setPOSTDictionary:[NSDictionary dictionaryWithObjectsAndKeys:[order objectForKey:@"order_id"],@"order_id",[order objectForKey:@"is_please"],@"please",[DataService sharedService].store_id,@"store_id",billing,@"billing",[NSNumber numberWithInt:self.payType],@"pay_type",[NSNumber numberWithInt:0],@"is_free",[order objectForKey:@"prods"],@"prods", nil]];
     }else {
-         [r setPOSTDictionary:[NSDictionary dictionaryWithObjectsAndKeys:[order objectForKey:@"order_id"],@"order_id",[order objectForKey:@"is_please"],@"please",[DataService sharedService].store_id,@"store_id",billing,@"billing",[NSNumber numberWithInt:self.payType],@"pay_type",self.txtCode.text,@"code",[NSNumber numberWithInt:0],@"is_free", nil]];
+        [r setPOSTDictionary:[NSDictionary dictionaryWithObjectsAndKeys:[order objectForKey:@"order_id"],@"order_id",[order objectForKey:@"is_please"],@"please",[DataService sharedService].store_id,@"store_id",billing,@"billing",[NSNumber numberWithInt:self.payType],@"pay_type",self.txtCode.text,@"code",[NSNumber numberWithInt:0],@"is_free",[order objectForKey:@"prods"],@"prods", nil]];
     }
     
     [r setPostDataEncoding:NSUTF8StringEncoding];
@@ -51,18 +72,62 @@
     NSString *str = [r startSynchronousWithError:&error];
     NSDictionary *result = [str objectFromJSONString];
     DLog(@"%@",result);
-
+    
     if ([[result objectForKey:@"status"] intValue]==1) {
         [Utils errorAlert:@"交易成功!"];
+        NSDictionary *order_dic = [result objectForKey:@"orders"];
+        NSMutableDictionary *dic = [[NSMutableDictionary alloc]init];
+        //排队等候
+        if (![[order_dic objectForKey:@"0"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"0"]!= nil) {
+            NSArray *waiting_array = [order_dic objectForKey:@"0"];
+            if (waiting_array.count>0) {
+                self.waittingCarsArr = [[NSMutableArray alloc]init];
+                for (int i=0; i<waiting_array.count; i++) {
+                    NSDictionary *resultt = [waiting_array objectAtIndex:i];
+                    CarObj *carobject = [self setAttributeWithDictionary:resultt];
+                    [self.waittingCarsArr addObject:carobject];
+                }
+                [dic setObject:self.waittingCarsArr forKey:@"wait"];
+            }
+        }
+        //施工中
+        if (![[order_dic objectForKey:@"1"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"1"]!= nil) {
+            NSArray *working_array = [order_dic objectForKey:@"1"];
+            if (working_array.count>0) {
+                self.beginningCarsDic = [[NSMutableDictionary alloc]init];
+                for (int i=0; i<working_array.count; i++) {
+                    NSDictionary *resultt = [working_array objectAtIndex:i];
+                    CarObj *carobject = [self setAttributeWithDictionary:resultt];
+                    [self.beginningCarsDic setObject:carobject forKey:carobject.stationId];
+                }
+                [dic setObject:self.beginningCarsDic forKey:@"work"];
+            }
+        }
+        //等待付款
+        if (![[order_dic objectForKey:@"2"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"2"]!= nil) {
+            
+            NSArray *finish_array = [order_dic objectForKey:@"2"];
+            if (finish_array.count>0) {
+                self.finishedCarsArr = [[NSMutableArray alloc]init];
+                for (int i=0; i<finish_array.count; i++) {
+                    NSDictionary *resultt = [finish_array objectAtIndex:i];
+                    CarObj *carobject = [self setAttributeWithDictionary:resultt];
+                    [self.finishedCarsArr addObject:carobject];
+                }
+                [dic setObject:self.finishedCarsArr forKey:@"finish"];
+            }
+        }
+        
         isSuccess = TRUE;
     }else{
-        [Utils errorAlert:[NSString stringWithFormat:@"交易失败,%@!",[result objectForKey:@"content"]]];
+        [Utils errorAlert:[NSString stringWithFormat:@"交易失败!"]];
         isSuccess = FALSE;
     }
-    [MBProgressHUD hideHUDForView:self.view animated:YES];
+    
     if (self.delegate && [self.delegate respondsToSelector:@selector(closePopVieww:)]) {
         [self.delegate closePopVieww:self];
     }
+    [MBProgressHUD hideHUDForView:self.view animated:YES];
 }
 - (void)pay:(int)type{
     self.payType = type;
@@ -70,13 +135,73 @@
         if ([[Utils isExistenceNetwork] isEqualToString:@"NotReachable"]) {
             [Utils errorAlert:@"暂无网络!"];
         }else {
-            MBProgressHUD *hud = [[MBProgressHUD alloc] initWithView:self.view];
-            hud.dimBackground = NO;
-            [hud showWhileExecuting:@selector(payWithType) onTarget:self withObject:nil animated:YES];
-            hud.labelText = @"正在努力加载...";
-            [self.view addSubview:hud];
+            NSMutableDictionary *params=[[NSMutableDictionary alloc] init];
+            NSString *billing = @"1";
+            if (self.billingBtn.isOn) {
+                billing = @"1";
+            }else{
+                billing = @"0";
+            }
+            if (self.payType == 5) {
+                [params setObject:[DataService sharedService].store_id forKey:@"store_id"];
+                [params setObject:[order objectForKey:@"order_id"] forKey:@"order_id"];
+                [params setObject:[order objectForKey:@"is_please"] forKey:@"please"];
+                [params setObject:billing forKey:@"billing"];
+                [params setObject:[NSNumber numberWithInt:self.payType] forKey:@"pay_type"];
+                [params setObject:[NSNumber numberWithInt:1] forKey:@"is_free"];
+                [params setObject:[order objectForKey:@"prods"] forKey:@"prods"];
+            }else if (self.payType == 1) {
+                [params setObject:[DataService sharedService].store_id forKey:@"store_id"];
+                [params setObject:[order objectForKey:@"order_id"] forKey:@"order_id"];
+                [params setObject:[order objectForKey:@"is_please"] forKey:@"please"];
+                [params setObject:billing forKey:@"billing"];
+                [params setObject:[NSNumber numberWithInt:self.payType] forKey:@"pay_type"];
+                [params setObject:[NSNumber numberWithInt:0] forKey:@"is_free"];
+                [params setObject:[order objectForKey:@"prods"] forKey:@"prods"];
+                [params setObject:[DataService sharedService].kPosAppId forKey:@"appid"];
+            }else if (self.payType == 0){
+                [params setObject:[DataService sharedService].store_id forKey:@"store_id"];
+                [params setObject:[order objectForKey:@"order_id"] forKey:@"order_id"];
+                [params setObject:[order objectForKey:@"is_please"] forKey:@"please"];
+                [params setObject:billing forKey:@"billing"];
+                [params setObject:[NSNumber numberWithInt:self.payType] forKey:@"pay_type"];
+                [params setObject:[NSNumber numberWithInt:0] forKey:@"is_free"];
+                [params setObject:[order objectForKey:@"prods"] forKey:@"prods"];
+            }else {
+                [params setObject:[DataService sharedService].store_id forKey:@"store_id"];
+                [params setObject:[order objectForKey:@"order_id"] forKey:@"order_id"];
+                [params setObject:[order objectForKey:@"is_please"] forKey:@"please"];
+                [params setObject:billing forKey:@"billing"];
+                [params setObject:[NSNumber numberWithInt:self.payType] forKey:@"pay_type"];
+                [params setObject:[NSNumber numberWithInt:0] forKey:@"is_free"];
+                [params setObject:[order objectForKey:@"prods"] forKey:@"prods"];
+                [params setObject:self.txtCode.text forKey:@"code"];
+            }
+            
+            [params setObject:[DataService sharedService].store_id forKey:@"store_id"];
+            [params setObject:[DataService sharedService].user_id forKey:@"user_id"];
+            
+            NSMutableURLRequest *request=[Utils getRequest:params string:[NSString stringWithFormat:@"%@%@",kHost,kNewPay]];
+            NSOperationQueue *queue=[[NSOperationQueue alloc] init];
+            [NSURLConnection sendAsynchronousRequest:request queue:queue completionHandler:^(NSURLResponse *respone,
+                                                                                             NSData *data,
+                                                                                             NSError *error)
+             {
+                 if ([data length]>0 && error==nil) {
+                     [self performSelectorOnMainThread:@selector(payWithType:) withObject:data waitUntilDone:NO];
+                     
+                 }
+             }
+             ];
         }
+        
+        MBProgressHUD *hud = [[MBProgressHUD alloc] initWithView:self.view];
+        hud.dimBackground = NO;
+        [hud showWhileExecuting:@selector(payWithType) onTarget:self withObject:nil animated:YES];
+        hud.labelText = @"正在努力加载...";
+        [self.view addSubview:hud];
     }
+}
 }
 
 #pragma mark - 刷卡支付，调用钱方
@@ -165,7 +290,7 @@
             self.phoneView.hidden = YES;
             self.codeView.hidden = YES;
             self.payStyle.hidden = YES;
-//            [self payPal];
+            //            [self payPal];
         }else if (sender.selectedSegmentIndex == 2){
             self.phoneView.hidden = NO;
             self.codeView.hidden = YES;
@@ -292,7 +417,7 @@
 }
 
 - (void)viewDidLoad
-{ 
+{
     [super viewDidLoad];
     self.payType = -1;
     

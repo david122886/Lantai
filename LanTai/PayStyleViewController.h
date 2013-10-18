@@ -25,6 +25,9 @@
 @property (nonatomic,strong) IBOutlet UILabel *posLab;
 @property (nonatomic,strong) IBOutlet UIButton *posBtn,*sureBtn;
 
+@property (nonatomic,strong) NSMutableArray *waittingCarsArr;
+@property (nonatomic,strong) NSMutableDictionary *beginningCarsDic;
+@property (nonatomic,strong) NSMutableArray *finishedCarsArr;
 - (IBAction)clickSendCode:(id)sender;
 - (IBAction)clickCodeBtn:(id)sender;
 
