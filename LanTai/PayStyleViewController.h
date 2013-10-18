@@ -28,6 +28,8 @@
 @property (nonatomic,strong) NSMutableArray *waittingCarsArr;
 @property (nonatomic,strong) NSMutableDictionary *beginningCarsDic;
 @property (nonatomic,strong) NSMutableArray *finishedCarsArr;
+@property (nonatomic,strong) MBProgressHUD *hud;
+
 - (IBAction)clickSendCode:(id)sender;
 - (IBAction)clickCodeBtn:(id)sender;
 

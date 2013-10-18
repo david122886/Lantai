@@ -390,6 +390,7 @@
 - (NSString *)checkForm{
     NSMutableString *prod_ids = [NSMutableString string];
     int x=0,y=0,z=0;
+    DLog(@"%@",self.productList);
     for (NSDictionary *product in self.productList) {
         if ([product objectForKey:@"id"] && ![product objectForKey:@"has_p_card"]){
             //服务
@@ -401,7 +402,7 @@
                     NSString *p_id = [arr objectAtIndex:0];//产品id
                     if ([p_id intValue] == [[product objectForKey:@"id"]intValue]) {
                         if (![tempArray containsObject:p_id]) {
-                            [prod_ids appendFormat:@"0_%@,",str];
+                            [prod_ids appendFormat:@"0_%@,",p_id];///////////////////
                             [tempArray addObject:p_id];
                         }
                     }
@@ -416,7 +417,7 @@
                     NSArray *arr = [str componentsSeparatedByString:@"_"];
                     NSString *s_id = [arr objectAtIndex:0];//活动id
                     if ([s_id intValue] == [[product objectForKey:@"sale_id"] intValue]) {
-                        [prod_ids appendFormat:@"1_%@_%.2f,",str,0-[[product objectForKey:@"show_price"]floatValue]];
+                        [prod_ids appendFormat:@"1_%@_%.2f,",s_id,0-[[product objectForKey:@"show_price"]floatValue]];///////////////////////
                     }
                 }
             }
@@ -438,26 +439,26 @@
             }else {
                 if ([[product objectForKey:@"selected"] intValue] == 0) {
                     y +=1;
-                    [prod_ids appendFormat:@"2_%d_%d_%d_%.2f,",[[product objectForKey:@"scard_id"] intValue],[[product objectForKey:@"card_type"] intValue],[[product objectForKey:@"is_new"] intValue],0-[[product objectForKey:@"show_price"]floatValue]];
+                    [prod_ids appendFormat:@"2_%d_%.2f,",[[product objectForKey:@"scard_id"] intValue],0-[[product objectForKey:@"show_price"]floatValue]];///////
                 }
             }
             
         }else if([product objectForKey:@"products"]){
             //套餐卡
-            NSMutableString *p_str = [NSMutableString string];
-            for (NSDictionary *pro in [product objectForKey:@"products"]) {
-                if([[pro objectForKey:@"selected"] intValue]==0){
-                    
-                    int num = [[pro objectForKey:@"Total_num"]intValue] - [[pro objectForKey:@"num"]intValue];
-                    [p_str appendFormat:@"%d=%d-",[[pro objectForKey:@"product_id"] intValue],num];
-                }
-            }
+            //            NSMutableString *p_str = [NSMutableString string];
+            //            for (NSDictionary *pro in [product objectForKey:@"products"]) {
+            //                if([[pro objectForKey:@"selected"] intValue]==0){
+            //
+            //                    int num = [[pro objectForKey:@"Total_num"]intValue] - [[pro objectForKey:@"num"]intValue];
+            //                    [p_str appendFormat:@"%d=%d-",[[pro objectForKey:@"product_id"] intValue],num];
+            //                }
+            //            }
             z += 1;
             int has_pcard = [[product objectForKey:@"has_p_card"] intValue];
             if (has_pcard == 0) {
-                [prod_ids appendFormat:@"3_%d_%d_%@,",[[product objectForKey:@"id"] intValue],[[product objectForKey:@"has_p_card"] intValue],p_str];
+                [prod_ids appendFormat:@"3_%d,",[[product objectForKey:@"id"] intValue]];
             }else {
-                [prod_ids appendFormat:@"3_%d_%d_%@_%d,",[[product objectForKey:@"id"] intValue],[[product objectForKey:@"has_p_card"] intValue],p_str,[[product objectForKey:@"cpard_relation_id"] intValue]];
+                [prod_ids appendFormat:@"3_%d",[[product objectForKey:@"id"] intValue]];
             }
         }
     }
@@ -485,21 +486,18 @@
         [self.navigationController pushViewController:complaint animated:YES];
     }else if (sender.selectedSegmentIndex == 1 || sender.selectedSegmentIndex == 2 || sender.selectedSegmentIndex == 3){
         self.payString = [self checkForm];
+        DLog(@"pay = %@",self.payString);
         //评价，弹出框
         payStyleView = nil;
         payStyleView = [[PayStyleViewController alloc] initWithNibName:@"PayStyleViewController" bundle:nil];
         payStyleView.delegate = self;
         NSMutableDictionary *dic = [NSMutableDictionary dictionary];
-        if (![[orderInfo objectForKey:@"order_id"] isKindOfClass:[NSNull class]] && [orderInfo objectForKey:@"order_id"]!= nil){
-            [dic setObject:[orderInfo objectForKey:@"order_id"] forKey:@"order_id"];
-        }else {
-            
-            [dic setObject:[orderInfo objectForKey:@"order_code"] forKey:@"code"];
-        }
+        [dic setObject:[orderInfo objectForKey:@"order_id"] forKey:@"order_id"];
         [dic setObject:self.lblCarNum.text forKey:@"carNum"];
         [dic setObject:self.payString forKey:@"prods"];
         [dic setObject:[NSNumber numberWithInt:sender.selectedSegmentIndex] forKey:@"is_please"];
         [dic setObject:[NSString stringWithFormat:@"%.2f",self.total_count] forKey:@"price"];
+        
         payStyleView.order = [NSMutableDictionary dictionaryWithDictionary:dic];
         
         [self presentPopupViewController:payStyleView animationType:MJPopupViewAnimationSlideBottomBottom];
@@ -608,7 +606,7 @@
             [dic setObject:payStyleViewController.waittingCarsArr forKey:@"wait"];
         }
         if (payStyleViewController.beginningCarsDic.allKeys.count>0) {
-            [dic setObject:payStyleViewController.waittingCarsArr forKey:@"work"];
+            [dic setObject:payStyleViewController.beginningCarsDic forKey:@"work"];
         }
         if (payStyleViewController.finishedCarsArr.count>0) {
             [dic setObject:payStyleViewController.finishedCarsArr forKey:@"finish"];

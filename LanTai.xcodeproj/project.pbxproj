@@ -355,6 +355,7 @@
 		0EA2E044180E777000B4FE02 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				0EA2E069180E823C00B4FE02 /* view_bg.png */,
 				637EE7961810D67200C8CE6F /* clock.png */,
 				63552B4A1810D360007BA7D4 /* menubg.png */,
 				63552B4B1810D360007BA7D4 /* refreshbg.png */,
@@ -370,7 +371,6 @@
 				0EA2E06D180E826700B4FE02 /* btn_bg_active.png */,
 				0EA2E06E180E826700B4FE02 /* btn_bg.png */,
 				0EA2E073180E952000B4FE02 /* back.png */,
-				0EA2E069180E823C00B4FE02 /* view_bg.png */,
 				0EA2E05D180E786C00B4FE02 /* lantan_login.png */,
 				0EA2E05E180E786C00B4FE02 /* lantan_login_active.png */,
 				0EA2E053180E780400B4FE02 /* login_bg.jpg */,
