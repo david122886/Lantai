@@ -41,17 +41,6 @@
     [super viewDidLoad];
     
 }
-- (void)errorAlert:(NSString *)message
-{
-    [AHAlertView applyCustomAlertAppearance];
-    AHAlertView *alertt = [[AHAlertView alloc] initWithTitle:kTip message:message];
-    __block AHAlertView *alert = alertt;
-    [alertt setCancelButtonTitle:@"确定" block:^{
-        alert.dismissalStyle = AHAlertViewDismissalStyleTumble;
-        alert = nil;
-    }];
-    [alertt show];
-}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

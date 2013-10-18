@@ -134,6 +134,7 @@
                             CarObj *order = [self setAttributeWithDictionary:result];
                             [self.beginningCarsDic setObject:order forKey:order.stationId];
                         }
+                        
                         [self moveCarIntoCarPosion];
                     }
                 }
@@ -160,11 +161,6 @@
     }
 }
 
-#if DEBUG
--(void)viewWillAppear:(BOOL)animated{
-    
-}
-#else
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     if ([[Utils isExistenceNetwork] isEqualToString:@"NotReachable"]) {
@@ -177,7 +173,7 @@
         }
     }
 }
-#endif
+
 
 -(void )addRightnaviItemsWithImage:(NSString *)imageName {
     NSMutableArray *mycustomButtons = [NSMutableArray array];
@@ -213,14 +209,9 @@
 -(void)moveCarIntoCarPosion{
     for (int index = 0; index < [self.posionItemArr count]; index++) {
         CarPosionView *posion = [self.posionItemArr objectAtIndex:index];
-        if ([self.beginningCarsDic count] > index) {
-            CarObj *obj = [self.beginningCarsDic objectForKey:[NSString stringWithFormat:@"%@",[self.stationArray objectAtIndex:index]]];
-            
-            [posion setCarObj:obj];
-        }else{
-            [posion setCarObj:nil];
-        }
+        CarObj *obj = [self.beginningCarsDic objectForKey:[NSString stringWithFormat:@"%@",[self.stationArray objectAtIndex:index]]];
         
+        [posion setCarObj:obj];
     }
 }
 -(void)setWaittingScrollViewContext{
@@ -414,6 +405,7 @@
         [self didMoveCarCellFromBeginningScrollViewToBottomLeftScrollViewCellPosionFromIndex:carView.posionID toIndex:0 orCarObj:carObj];
     }];
 }
+
 #if DEBUG
 -(void)testController{
     for (int index = 0; index < 6; index++) {
@@ -455,8 +447,6 @@
     }
     [self.orderTable reloadData];
 }
-#else
-
 #endif
 
 #if DEBUG
@@ -482,12 +472,7 @@
     [self.serveRefreshBt setBackgroundImage:Nil forState:UIControlStateNormal];
     self.leftTopScrollView.tag = -1;
     self.bottomLeftScrollView.tag = -1;
-    //    [self testController];
-    
-    //    [self setWaittingScrollViewContext];
-    //    [self setFinishedScrollViewContext];
-    //    [self moveCarIntoCarPosion];
-	
+
     //退出登录
     self.navigationItem.rightBarButtonItems = nil;
     [self addRightnaviItemsWithImage:@"back"];
@@ -537,7 +522,6 @@
     }];
     
 }
-
 #endif
 
 -(void)reloadArray:(NSNotification *)notification {
@@ -545,16 +529,23 @@
     
     if (![[dic objectForKey:@"wait"]isKindOfClass:[NSNull class]] && [dic objectForKey:@"wait"]!=nil) {
         self.waittingCarsArr = [NSMutableArray arrayWithArray:[dic objectForKey:@"wait"]];
-        [self setWaittingScrollViewContext];
+    }else {
+        self.waittingCarsArr = [[NSMutableArray alloc]init];
     }
     if (![[dic objectForKey:@"work"]isKindOfClass:[NSNull class]] && [dic objectForKey:@"work"]!=nil) {
-        self.beginningCarsDic = [NSMutableDictionary dictionaryWithDictionary:[dic objectForKey:@"work"]];
-        [self moveCarIntoCarPosion];
+        self.beginningCarsDic = [dic objectForKey:@"work"];
+    }else {
+        self.beginningCarsDic = [[NSMutableDictionary alloc]init];
     }
     if (![[dic objectForKey:@"finish"]isKindOfClass:[NSNull class]] && [dic objectForKey:@"finish"]!=nil) {
         self.finishedCarsArr = [NSMutableArray arrayWithArray:[dic objectForKey:@"finish"]];
-        [self setFinishedScrollViewContext];
+    }else {
+        self.finishedCarsArr = [[NSMutableArray alloc]init];
     }
+    
+    [self setWaittingScrollViewContext];
+    [self moveCarIntoCarPosion];
+    [self setFinishedScrollViewContext];
 }
 - (void)sure:(NSNotification *)notification {
     NSDictionary *dic = [notification object];
@@ -578,11 +569,6 @@
 }
 
 #pragma mark CarCellViewDelegate 付款
-#if DEBUG
--(void)carCellViewDidSelected:(CarCellView *)view{
-    NSLog(@"selectedCar:%@",view.carNumber);
-}
-#else
 -(void)carCellViewDidSelected:(CarCellView *)view{
     DLog(@"tag = %d",view.tag);
     CarObj *carObject = (CarObj *)[self.finishedCarsArr objectAtIndex:view.tag];
@@ -609,7 +595,7 @@
          ];
     }
 }
-#endif
+
 -(void)payMoney:(NSData *)data {
     id jsonObject=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
     if (jsonObject !=nil) {
@@ -642,48 +628,52 @@
                 [DataService sharedService].total_count = payView.total_count;//总价放到单例去
                 [self.navigationController pushViewController:payView animated:YES];
             }else if ([[jsonData objectForKey:@"status"]intValue] == 1) {
-                [Utils errorAlert:@"已经付完款!"];
-                NSDictionary *order_dic = [jsonData objectForKey:@"orders"];
-                //排队等候
-                if (![[order_dic objectForKey:@"0"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"0"]!= nil) {
-                    NSArray *waiting_array = [order_dic objectForKey:@"0"];
-                    if (waiting_array.count>0) {
-                        self.waittingCarsArr = [[NSMutableArray alloc]init];
-                        for (int i=0; i<waiting_array.count; i++) {
-                            NSDictionary *resultt = [waiting_array objectAtIndex:i];
-                            CarObj *order = [self setAttributeWithDictionary:resultt];
-                            [self.waittingCarsArr addObject:order];
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    [Utils errorAlert:@"已经付完款!"];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        NSDictionary *order_dic = [jsonData objectForKey:@"orders"];
+                        //排队等候
+                        if (![[order_dic objectForKey:@"0"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"0"]!= nil) {
+                            NSArray *waiting_array = [order_dic objectForKey:@"0"];
+                            if (waiting_array.count>0) {
+                                self.waittingCarsArr = [[NSMutableArray alloc]init];
+                                for (int i=0; i<waiting_array.count; i++) {
+                                    NSDictionary *resultt = [waiting_array objectAtIndex:i];
+                                    CarObj *order = [self setAttributeWithDictionary:resultt];
+                                    [self.waittingCarsArr addObject:order];
+                                }
+                                [self setWaittingScrollViewContext];
+                            }
                         }
-                        [self setWaittingScrollViewContext];
-                    }
-                }
-                //施工中
-                if (![[order_dic objectForKey:@"1"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"1"]!= nil) {
-                    NSArray *working_array = [order_dic objectForKey:@"1"];
-                    if (working_array.count>0) {
-                        self.beginningCarsDic = [[NSMutableDictionary alloc]init];
-                        for (int i=0; i<working_array.count; i++) {
-                            NSDictionary *resultt = [working_array objectAtIndex:i];
-                            CarObj *order = [self setAttributeWithDictionary:resultt];
-                            [self.beginningCarsDic setObject:order forKey:order.stationId];
+                        //施工中
+                        if (![[order_dic objectForKey:@"1"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"1"]!= nil) {
+                            NSArray *working_array = [order_dic objectForKey:@"1"];
+                            if (working_array.count>0) {
+                                self.beginningCarsDic = [[NSMutableDictionary alloc]init];
+                                for (int i=0; i<working_array.count; i++) {
+                                    NSDictionary *resultt = [working_array objectAtIndex:i];
+                                    CarObj *order = [self setAttributeWithDictionary:resultt];
+                                    [self.beginningCarsDic setObject:order forKey:order.stationId];
+                                }
+                                [self moveCarIntoCarPosion];
+                            }
                         }
-                        [self moveCarIntoCarPosion];
-                    }
-                }
-                //等待付款
-                if (![[order_dic objectForKey:@"2"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"2"]!= nil) {
-                    
-                    NSArray *finish_array = [order_dic objectForKey:@"2"];
-                    if (finish_array.count>0) {
-                        self.finishedCarsArr = [[NSMutableArray alloc]init];
-                        for (int i=0; i<finish_array.count; i++) {
-                            NSDictionary *resultt = [finish_array objectAtIndex:i];
-                            CarObj *order = [self setAttributeWithDictionary:resultt];
-                            [self.finishedCarsArr addObject:order];
+                        //等待付款
+                        if (![[order_dic objectForKey:@"2"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"2"]!= nil) {
+                            
+                            NSArray *finish_array = [order_dic objectForKey:@"2"];
+                            if (finish_array.count>0) {
+                                self.finishedCarsArr = [[NSMutableArray alloc]init];
+                                for (int i=0; i<finish_array.count; i++) {
+                                    NSDictionary *resultt = [finish_array objectAtIndex:i];
+                                    CarObj *order = [self setAttributeWithDictionary:resultt];
+                                    [self.finishedCarsArr addObject:order];
+                                }
+                                [self setFinishedScrollViewContext];
+                            }
                         }
-                        [self setFinishedScrollViewContext];
-                    }
-                }
+                    });
+                });
             }
         }
     }
@@ -742,6 +732,11 @@
 #pragma mark --
 
 - (IBAction)refreshServeItemsBtClicked:(id)sender {
+    if ([[Utils isExistenceNetwork] isEqualToString:@"NotReachable"]) {
+        [Utils errorAlert:@"暂无网络!"];
+    }else {
+        [self getData];
+    }
 }
 
 - (IBAction)touchDragGesture:(UIPanGestureRecognizer *)sender {
@@ -793,24 +788,23 @@
 #pragma mark network
 //调整工位
 static NSString *work_order_id_station_id = nil;
-#if DEBUG
+static NSMutableDictionary *work_dic = nil;
 -(void)didExchangeBeginningCarCellPosionFromIndex:(int)from toIndex:(int)to orFromCarObj:(CarObj*)fromObj toCarObj:(CarObj*)toObj{
-    double delayInSeconds = 1.0;
-    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-        [self failureExchangeBeginningCarCellPosionFromIndex:from toIndex:to orFromCarObj:fromObj toCarObj:toObj];
-    });
-}
-#else
--(void)didExchangeBeginningCarCellPosionFromIndex:(int)from toIndex:(int)to orFromCarObj:(CarObj*)fromObj toCarObj:(CarObj*)toObj{
-    if (toObj) {
-        work_order_id_station_id = [NSString stringWithFormat:@"%@_%@,%@_%@",toObj.workOrderId,fromObj.stationId,fromObj.workOrderId,toObj.stationId];
-    }else {
-        work_order_id_station_id = [NSString stringWithFormat:@"%@_%d",fromObj.workOrderId,to];
-    }
     if ([[Utils isExistenceNetwork] isEqualToString:@"NotReachable"]) {
         [Utils errorAlert:@"暂无网络!"];
     }else {
+        work_dic = [[NSMutableDictionary alloc]init];
+        [work_dic setObject:[NSString stringWithFormat:@"%d",from] forKey:@"from"];
+        [work_dic setObject:[NSString stringWithFormat:@"%d",to] forKey:@"to"];
+        [work_dic setObject:fromObj forKey:@"fromObj"];
+        if (toObj) {
+            work_order_id_station_id = [NSString stringWithFormat:@"%@_%@,%@_%@",toObj.workOrderId,fromObj.stationId,fromObj.workOrderId,toObj.stationId];
+            
+            [work_dic setObject:toObj forKey:@"toObj"];
+        }else {
+            work_order_id_station_id = [NSString stringWithFormat:@"%@_%d",fromObj.workOrderId,to];
+        }
+        
         if (work_order_id_station_id) {
             self.hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
             self.hud.labelText = @"正在玩命加载...";
@@ -834,9 +828,6 @@ static NSString *work_order_id_station_id = nil;
         }
     }
 }
-
-#endif
-
 -(void)selectStation:(NSData *)data {
     id jsonObject=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
     if (jsonObject !=nil) {
@@ -885,28 +876,37 @@ static NSString *work_order_id_station_id = nil;
                         [self setFinishedScrollViewContext];
                     }
                 }
+            }else if ([[jsonData objectForKey:@"status"]intValue] == 0){
+                
+            }else {
+                int from = [[work_dic objectForKey:@"from"]intValue];
+                int to = [[work_dic objectForKey:@"to"]intValue];
+                CarObj *fromObj = (CarObj *)[work_dic objectForKey:@"fromObj"];
+                if (![[work_dic objectForKey:@"toObj"]isKindOfClass:[NSNull class]] && [work_dic objectForKey:@"toObj"]!=nil) {
+                    CarObj *toObj = (CarObj *)[work_dic objectForKey:@"toObj"];
+                    
+                    [self failureExchangeBeginningCarCellPosionFromIndex:from toIndex:to orFromCarObj:fromObj toCarObj:toObj];
+                }else {
+                    [self failureExchangeBeginningCarCellPosionFromIndex:from toIndex:to orFromCarObj:fromObj toCarObj:NULL];
+                }
             }
         }
     }
     [MBProgressHUD hideHUDForView:self.view animated:YES];
 }
 
-
 //施工完成
 static NSString *work_order_id = nil;
-#if DEBUG
--(void)didMoveCarCellFromBeginningScrollViewToBottomLeftScrollViewCellPosionFromIndex:(int)from toIndex:(int)to orCarObj:(CarObj*)fromObj{
-    double delayInSeconds = 1.0;
-    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-        [self failureMoveCarCellFromBeginningScrollViewToBottomLeftScrollViewCellPosionFromIndex:from toIndex:to orCarObj:fromObj];
-    });
-}
-#else
+static NSMutableDictionary *finish_dic = nil;
 -(void)didMoveCarCellFromBeginningScrollViewToBottomLeftScrollViewCellPosionFromIndex:(int)from toIndex:(int)to orCarObj:(CarObj*)fromObj{
     if ([[Utils isExistenceNetwork] isEqualToString:@"NotReachable"]) {
         [Utils errorAlert:@"暂无网络!"];
     }else {
+        finish_dic = [[NSMutableDictionary alloc]init];
+        [finish_dic setObject:[NSString stringWithFormat:@"%d",from] forKey:@"from"];
+        [finish_dic setObject:[NSString stringWithFormat:@"%d",to] forKey:@"to"];
+        [finish_dic setObject:fromObj forKey:@"carObj"];
+        
         self.hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
         self.hud.labelText = @"正在玩命加载...";
         work_order_id = fromObj.workOrderId;
@@ -928,7 +928,6 @@ static NSString *work_order_id = nil;
          ];
     }
 }
-#endif
 
 -(void)finishOrder:(NSData *)data {
     id jsonObject=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
@@ -936,7 +935,7 @@ static NSString *work_order_id = nil;
         if ([jsonObject isKindOfClass:[NSDictionary class]]) {
             NSDictionary *jsonData=(NSDictionary *)jsonObject;
             DLog(@"jsonData = %@",jsonData);
-            if ([[jsonData objectForKey:@"status"]intValue] == 0) {
+            if ([[jsonData objectForKey:@"status"]intValue] == 1) {
                 NSDictionary *order_dic = [jsonData objectForKey:@"orders"];
                 //排队等候
                 if (![[order_dic objectForKey:@"0"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"0"]!= nil) {
@@ -978,6 +977,58 @@ static NSString *work_order_id = nil;
                         [self setFinishedScrollViewContext];
                     }
                 }
+            }else if ([[jsonData objectForKey:@"status"]intValue] == 0) {
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    [Utils errorAlert:@"已经付完款!"];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        NSDictionary *order_dic = [jsonData objectForKey:@"orders"];
+                        //排队等候
+                        if (![[order_dic objectForKey:@"0"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"0"]!= nil) {
+                            NSArray *waiting_array = [order_dic objectForKey:@"0"];
+                            if (waiting_array.count>0) {
+                                self.waittingCarsArr = [[NSMutableArray alloc]init];
+                                for (int i=0; i<waiting_array.count; i++) {
+                                    NSDictionary *resultt = [waiting_array objectAtIndex:i];
+                                    CarObj *order = [self setAttributeWithDictionary:resultt];
+                                    [self.waittingCarsArr addObject:order];
+                                }
+                                [self setWaittingScrollViewContext];
+                            }
+                        }
+                        //施工中
+                        if (![[order_dic objectForKey:@"1"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"1"]!= nil) {
+                            NSArray *working_array = [order_dic objectForKey:@"1"];
+                            if (working_array.count>0) {
+                                self.beginningCarsDic = [[NSMutableDictionary alloc]init];
+                                for (int i=0; i<working_array.count; i++) {
+                                    NSDictionary *resultt = [working_array objectAtIndex:i];
+                                    CarObj *order = [self setAttributeWithDictionary:resultt];
+                                    [self.beginningCarsDic setObject:order forKey:order.stationId];
+                                }
+                                [self moveCarIntoCarPosion];
+                            }
+                        }
+                        //等待付款
+                        if (![[order_dic objectForKey:@"2"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"2"]!= nil) {
+                            
+                            NSArray *finish_array = [order_dic objectForKey:@"2"];
+                            if (finish_array.count>0) {
+                                self.finishedCarsArr = [[NSMutableArray alloc]init];
+                                for (int i=0; i<finish_array.count; i++) {
+                                    NSDictionary *resultt = [finish_array objectAtIndex:i];
+                                    CarObj *order = [self setAttributeWithDictionary:resultt];
+                                    [self.finishedCarsArr addObject:order];
+                                }
+                                [self setFinishedScrollViewContext];
+                            }
+                        }
+                    });
+                });
+            }else {
+                int from = [[finish_dic objectForKey:@"from"]intValue];
+                int to = [[finish_dic objectForKey:@"to"]intValue];
+                CarObj *obj = (CarObj *)[finish_dic objectForKey:@"carObj"];
+                [self failureMoveCarCellFromBeginningScrollViewToBottomLeftScrollViewCellPosionFromIndex:from toIndex:to orCarObj:obj];
             }
         }
     }
@@ -1132,7 +1183,7 @@ static NSString *service_id = nil;
                 for (int i=0; i<working_array.count; i++) {
                     NSDictionary *resultt = [working_array objectAtIndex:i];
                     CarObj *order = [self setAttributeWithDictionary:resultt];
-                    [self.beginningCarsDic setObject:order forKey:order.stationId];
+                    [self.beginningCarsDic setValue:order forKey:order.stationId];
                 }
                 [self moveCarIntoCarPosion];
             }

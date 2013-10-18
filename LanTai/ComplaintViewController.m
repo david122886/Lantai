@@ -32,15 +32,35 @@
     
     self.scView.contentSize = CGSizeMake(320, 868);
 }
+-(void )addRightnaviItemsWithImage:(NSString *)imageName {
+    NSMutableArray *mycustomButtons = [NSMutableArray array];
+    if (imageName != nil && ![imageName isEqualToString:@""]) {
+        UIButton *btn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
+        [btn setImage:[UIImage imageNamed:imageName] forState:UIControlStateNormal];
+        [btn setImage:[UIImage imageNamed:[NSString stringWithFormat:@"%@_active", imageName]] forState:UIControlStateHighlighted];
+        btn.userInteractionEnabled = YES;
+        [btn addTarget:self action:@selector(rightTapped:) forControlEvents:UIControlEventTouchUpInside];
+        UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithCustomView:btn];
+        [mycustomButtons addObject: item];
+        btn = nil;
+        item = nil;
+    }
+    self.navigationItem.rightBarButtonItems=mycustomButtons;
+    [self.navigationItem setHidesBackButton:YES animated:YES];
+}
+- (void)rightTapped:(id)sender{
+    [self.navigationController popViewControllerAnimated:YES];
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     if (![self.navigationItem rightBarButtonItem]) {
-//        [self addRightnaviItemsWithImage:@"back" andImage:nil];
+        [self addRightnaviItemsWithImage:@"back"];
     }
     if (info) {
         self.lblCarNum.text = [info objectForKey:@"carNum"];
         self.lblProduct.text = [info objectForKey:@"prods"];
+        self.lblCode.text = [info objectForKey:@"code"];
     }
     self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"view_bg"]];
      self.infoBgView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"dot_1_bg"]];

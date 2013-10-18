@@ -30,12 +30,9 @@
 @property (nonatomic,strong) NSMutableArray *dataArray;
 @property (nonatomic,strong) ShaixuanView *sxView;
 @property (nonatomic,strong) NSMutableArray *letterArray;
-//@property (nonatomic,strong) PayViewController *payView;
 @property (nonatomic,strong) NSString *is_car_num;//0:电话  1:车牌
 @property (nonatomic,strong) PlateVViewController *plateView;
-@property (nonatomic,strong) NSMutableArray *waitArray;//排队等候
-@property (nonatomic,strong) NSMutableArray *workingArray;//施工中
-@property (nonatomic,strong) NSMutableArray *waitPayArray;//等待付款
+
 
 //菊花
 @property (nonatomic,strong) MBProgressHUD *hud;

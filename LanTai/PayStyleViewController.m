@@ -49,83 +49,66 @@
 }
 
 #pragma mark - 支付
--(void)payWithType {
-    STHTTPRequest *r  = [STHTTPRequest requestWithURLString:[NSString stringWithFormat:@"%@%@",kHost,kNewPay]];
-    NSString *billing = @"1";
-    if (self.billingBtn.isOn) {
-        billing = @"1";
-    }else{
-        billing = @"0";
-    }
-    if (self.payType == 5) {
-        [r setPOSTDictionary:[NSDictionary dictionaryWithObjectsAndKeys:[order objectForKey:@"order_id"],@"order_id",[order objectForKey:@"is_please"],@"please",[DataService sharedService].store_id,@"store_id",billing,@"billing",[NSNumber numberWithInt:self.payType],@"pay_type",[NSNumber numberWithInt:1],@"is_free",[order objectForKey:@"prods"],@"prods", nil]];
-    }else if (self.payType == 1) {
-        [r setPOSTDictionary:[NSDictionary dictionaryWithObjectsAndKeys:[order objectForKey:@"order_id"],@"order_id",[order objectForKey:@"is_please"],@"please",[DataService sharedService].store_id,@"store_id",billing,@"billing",[NSNumber numberWithInt:self.payType],@"pay_type",[NSNumber numberWithInt:0],@"is_free",[DataService sharedService].kPosAppId,@"appid",[order objectForKey:@"prods"],@"prods", nil]];
-    }else if (self.payType == 0){
-        [r setPOSTDictionary:[NSDictionary dictionaryWithObjectsAndKeys:[order objectForKey:@"order_id"],@"order_id",[order objectForKey:@"is_please"],@"please",[DataService sharedService].store_id,@"store_id",billing,@"billing",[NSNumber numberWithInt:self.payType],@"pay_type",[NSNumber numberWithInt:0],@"is_free",[order objectForKey:@"prods"],@"prods", nil]];
-    }else {
-        [r setPOSTDictionary:[NSDictionary dictionaryWithObjectsAndKeys:[order objectForKey:@"order_id"],@"order_id",[order objectForKey:@"is_please"],@"please",[DataService sharedService].store_id,@"store_id",billing,@"billing",[NSNumber numberWithInt:self.payType],@"pay_type",self.txtCode.text,@"code",[NSNumber numberWithInt:0],@"is_free",[order objectForKey:@"prods"],@"prods", nil]];
-    }
-    
-    [r setPostDataEncoding:NSUTF8StringEncoding];
-    NSError *error = nil;
-    NSString *str = [r startSynchronousWithError:&error];
-    NSDictionary *result = [str objectFromJSONString];
-    DLog(@"%@",result);
-    
-    if ([[result objectForKey:@"status"] intValue]==1) {
-        [Utils errorAlert:@"交易成功!"];
-        NSDictionary *order_dic = [result objectForKey:@"orders"];
-        NSMutableDictionary *dic = [[NSMutableDictionary alloc]init];
-        //排队等候
-        if (![[order_dic objectForKey:@"0"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"0"]!= nil) {
-            NSArray *waiting_array = [order_dic objectForKey:@"0"];
-            if (waiting_array.count>0) {
-                self.waittingCarsArr = [[NSMutableArray alloc]init];
-                for (int i=0; i<waiting_array.count; i++) {
-                    NSDictionary *resultt = [waiting_array objectAtIndex:i];
-                    CarObj *carobject = [self setAttributeWithDictionary:resultt];
-                    [self.waittingCarsArr addObject:carobject];
+-(void)payWithType:(NSData *)data {
+    id jsonObject=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
+    if (jsonObject !=nil) {
+        if ([jsonObject isKindOfClass:[NSDictionary class]]) {
+            NSDictionary *jsonData=(NSDictionary *)jsonObject;
+            DLog(@"jsonData = %@",jsonData);
+            if ([[jsonData objectForKey:@"status"]intValue] == 1) {
+                [Utils errorAlert:@"交易成功!"];
+                NSDictionary *order_dic = [jsonData objectForKey:@"orders"];
+                NSMutableDictionary *dic = [[NSMutableDictionary alloc]init];
+                //排队等候
+                if (![[order_dic objectForKey:@"0"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"0"]!= nil) {
+                    NSArray *waiting_array = [order_dic objectForKey:@"0"];
+                    if (waiting_array.count>0) {
+                        self.waittingCarsArr = [[NSMutableArray alloc]init];
+                        for (int i=0; i<waiting_array.count; i++) {
+                            NSDictionary *resultt = [waiting_array objectAtIndex:i];
+                            CarObj *carobject = [self setAttributeWithDictionary:resultt];
+                            [self.waittingCarsArr addObject:carobject];
+                        }
+                        [dic setObject:self.waittingCarsArr forKey:@"wait"];
+                    }
                 }
-                [dic setObject:self.waittingCarsArr forKey:@"wait"];
+                //施工中
+                if (![[order_dic objectForKey:@"1"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"1"]!= nil) {
+                    NSArray *working_array = [order_dic objectForKey:@"1"];
+                    if (working_array.count>0) {
+                        self.beginningCarsDic = [[NSMutableDictionary alloc]init];
+                        for (int i=0; i<working_array.count; i++) {
+                            NSDictionary *resultt = [working_array objectAtIndex:i];
+                            CarObj *carobject = [self setAttributeWithDictionary:resultt];
+                            [self.beginningCarsDic setObject:carobject forKey:carobject.stationId];
+                        }
+                        [dic setObject:self.beginningCarsDic forKey:@"work"];
+                    }
+                }
+                //等待付款
+                if (![[order_dic objectForKey:@"2"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"2"]!= nil) {
+                    
+                    NSArray *finish_array = [order_dic objectForKey:@"2"];
+                    if (finish_array.count>0) {
+                        self.finishedCarsArr = [[NSMutableArray alloc]init];
+                        for (int i=0; i<finish_array.count; i++) {
+                            NSDictionary *resultt = [finish_array objectAtIndex:i];
+                            CarObj *carobject = [self setAttributeWithDictionary:resultt];
+                            [self.finishedCarsArr addObject:carobject];
+                        }
+                        [dic setObject:self.finishedCarsArr forKey:@"finish"];
+                    }
+                }
+                
+                isSuccess = TRUE;
+            }else {
+                [Utils errorAlert:[NSString stringWithFormat:@"交易失败!"]];
+                isSuccess = FALSE;
+            }
+            if (self.delegate && [self.delegate respondsToSelector:@selector(closePopVieww:)]) {
+                [self.delegate closePopVieww:self];
             }
         }
-        //施工中
-        if (![[order_dic objectForKey:@"1"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"1"]!= nil) {
-            NSArray *working_array = [order_dic objectForKey:@"1"];
-            if (working_array.count>0) {
-                self.beginningCarsDic = [[NSMutableDictionary alloc]init];
-                for (int i=0; i<working_array.count; i++) {
-                    NSDictionary *resultt = [working_array objectAtIndex:i];
-                    CarObj *carobject = [self setAttributeWithDictionary:resultt];
-                    [self.beginningCarsDic setObject:carobject forKey:carobject.stationId];
-                }
-                [dic setObject:self.beginningCarsDic forKey:@"work"];
-            }
-        }
-        //等待付款
-        if (![[order_dic objectForKey:@"2"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"2"]!= nil) {
-            
-            NSArray *finish_array = [order_dic objectForKey:@"2"];
-            if (finish_array.count>0) {
-                self.finishedCarsArr = [[NSMutableArray alloc]init];
-                for (int i=0; i<finish_array.count; i++) {
-                    NSDictionary *resultt = [finish_array objectAtIndex:i];
-                    CarObj *carobject = [self setAttributeWithDictionary:resultt];
-                    [self.finishedCarsArr addObject:carobject];
-                }
-                [dic setObject:self.finishedCarsArr forKey:@"finish"];
-            }
-        }
-        
-        isSuccess = TRUE;
-    }else{
-        [Utils errorAlert:[NSString stringWithFormat:@"交易失败!"]];
-        isSuccess = FALSE;
-    }
-    
-    if (self.delegate && [self.delegate respondsToSelector:@selector(closePopVieww:)]) {
-        [self.delegate closePopVieww:self];
     }
     [MBProgressHUD hideHUDForView:self.view animated:YES];
 }
@@ -135,6 +118,9 @@
         if ([[Utils isExistenceNetwork] isEqualToString:@"NotReachable"]) {
             [Utils errorAlert:@"暂无网络!"];
         }else {
+            self.hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+            self.hud.labelText = @"正在玩命加载...";
+            
             NSMutableDictionary *params=[[NSMutableDictionary alloc] init];
             NSString *billing = @"1";
             if (self.billingBtn.isOn) {
@@ -142,44 +128,25 @@
             }else{
                 billing = @"0";
             }
+            [params setObject:[DataService sharedService].store_id forKey:@"store_id"];
+            [params setObject:[order objectForKey:@"order_id"] forKey:@"order_id"];
+            [params setObject:[order objectForKey:@"is_please"] forKey:@"please"];
+            [params setObject:billing forKey:@"billing"];
+            [params setObject:[NSNumber numberWithInt:self.payType] forKey:@"pay_type"];
+            [params setObject:[order objectForKey:@"prods"] forKey:@"prods"];
+            [params setObject:[order objectForKey:@"price"] forKey:@"price"];
+            
             if (self.payType == 5) {
-                [params setObject:[DataService sharedService].store_id forKey:@"store_id"];
-                [params setObject:[order objectForKey:@"order_id"] forKey:@"order_id"];
-                [params setObject:[order objectForKey:@"is_please"] forKey:@"please"];
-                [params setObject:billing forKey:@"billing"];
-                [params setObject:[NSNumber numberWithInt:self.payType] forKey:@"pay_type"];
                 [params setObject:[NSNumber numberWithInt:1] forKey:@"is_free"];
-                [params setObject:[order objectForKey:@"prods"] forKey:@"prods"];
             }else if (self.payType == 1) {
-                [params setObject:[DataService sharedService].store_id forKey:@"store_id"];
-                [params setObject:[order objectForKey:@"order_id"] forKey:@"order_id"];
-                [params setObject:[order objectForKey:@"is_please"] forKey:@"please"];
-                [params setObject:billing forKey:@"billing"];
-                [params setObject:[NSNumber numberWithInt:self.payType] forKey:@"pay_type"];
                 [params setObject:[NSNumber numberWithInt:0] forKey:@"is_free"];
-                [params setObject:[order objectForKey:@"prods"] forKey:@"prods"];
                 [params setObject:[DataService sharedService].kPosAppId forKey:@"appid"];
             }else if (self.payType == 0){
-                [params setObject:[DataService sharedService].store_id forKey:@"store_id"];
-                [params setObject:[order objectForKey:@"order_id"] forKey:@"order_id"];
-                [params setObject:[order objectForKey:@"is_please"] forKey:@"please"];
-                [params setObject:billing forKey:@"billing"];
-                [params setObject:[NSNumber numberWithInt:self.payType] forKey:@"pay_type"];
                 [params setObject:[NSNumber numberWithInt:0] forKey:@"is_free"];
-                [params setObject:[order objectForKey:@"prods"] forKey:@"prods"];
             }else {
-                [params setObject:[DataService sharedService].store_id forKey:@"store_id"];
-                [params setObject:[order objectForKey:@"order_id"] forKey:@"order_id"];
-                [params setObject:[order objectForKey:@"is_please"] forKey:@"please"];
-                [params setObject:billing forKey:@"billing"];
-                [params setObject:[NSNumber numberWithInt:self.payType] forKey:@"pay_type"];
                 [params setObject:[NSNumber numberWithInt:0] forKey:@"is_free"];
-                [params setObject:[order objectForKey:@"prods"] forKey:@"prods"];
                 [params setObject:self.txtCode.text forKey:@"code"];
             }
-            
-            [params setObject:[DataService sharedService].store_id forKey:@"store_id"];
-            [params setObject:[DataService sharedService].user_id forKey:@"user_id"];
             
             NSMutableURLRequest *request=[Utils getRequest:params string:[NSString stringWithFormat:@"%@%@",kHost,kNewPay]];
             NSOperationQueue *queue=[[NSOperationQueue alloc] init];
@@ -194,15 +161,8 @@
              }
              ];
         }
-        
-        MBProgressHUD *hud = [[MBProgressHUD alloc] initWithView:self.view];
-        hud.dimBackground = NO;
-        [hud showWhileExecuting:@selector(payWithType) onTarget:self withObject:nil animated:YES];
-        hud.labelText = @"正在努力加载...";
-        [self.view addSubview:hud];
     }
 }
-
 
 #pragma mark - 刷卡支付，调用钱方
 - (BOOL)payPal{
