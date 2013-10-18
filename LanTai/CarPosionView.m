@@ -142,21 +142,28 @@
 
 -(void)setCarObj:(CarObj*)car{
     if (car) {
-        
         self.carView.carNumber = car.carPlateNumber;
         self.carView.state = CARBEGINNING;
-        NSDateFormatter *form = [[NSDateFormatter alloc] init];
-        [form setDateFormat:@"YYYY-MM-DD HH:mm:ss"];
-        NSDate *date = [form dateFromString:car.serviceStartTime?:@"00:00"];
-        NSCalendar *calendar = [NSCalendar currentCalendar];
-        NSDateComponents *components = [calendar components:(NSHourCalendarUnit | NSMinuteCalendarUnit) fromDate:date];
-        NSInteger hour = [components hour];
-        NSInteger minute = [components minute];
-        self.posionDate = [NSString stringWithFormat:@"%d:%d",hour,minute];
+        
+        self.posionDate = [self getTimeStrFromDateStr:car.serviceStartTime];
         self.posionServeName = car.serviceName;
         self.isEmpty = NO;
     }else{
         self.isEmpty = YES;
     }
+}
+
+-(NSString*)getTimeStrFromDateStr:(NSString*)dateStr{
+    if (dateStr) {
+        NSArray *date = [dateStr componentsSeparatedByString:@" "];
+        if ([date count] > 1) {
+            NSArray *timeArr = [[date objectAtIndex:1] componentsSeparatedByString:@":"];
+            if ([timeArr count] > 1) {
+                return [NSString stringWithFormat:@"%@:%@",timeArr[0],timeArr[1]];
+            }
+        }
+    }
+    return @"00:00";
+    
 }
 @end

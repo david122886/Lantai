@@ -18,9 +18,10 @@
 
 #define DEBUG 0
 #define CELL_WIDHT  250
-#define CELL_POSION_WIDHT  250
+#define CELL_POSION_WIDHT  240
 #define CELL_HEIGHT 134
 #define CELL_PADDING 10
+#define SCROLLVIEW_LEFT_PADDING 45
 #define SERVE_ITEM_HEIGHT 70
 
 @interface LanTaiMenuMainController ()
@@ -315,7 +316,7 @@
 -(CGRect)getBeginningScrollViewItemRectWithIndex:(int)index{
     
     float height = (708 -CGRectGetHeight(self.bottomLeftScrollView.frame)*2 - CELL_PADDING*3)/2;
-    return (CGRect){CELL_PADDING+(CELL_POSION_WIDHT+CELL_PADDING)*(index/2),CGRectGetMaxY(self.leftTopScrollView.frame)+CELL_PADDING*2+(height+CELL_PADDING)*(index%2),CELL_POSION_WIDHT,height};
+    return (CGRect){SCROLLVIEW_LEFT_PADDING+CELL_PADDING+(CELL_POSION_WIDHT+CELL_PADDING)*(index/2),CGRectGetMaxY(self.leftTopScrollView.frame)+CELL_PADDING*2+(height+CELL_PADDING)*(index%2),CELL_POSION_WIDHT,height};
 }
 
 -(void)exchangeBeginningCarCellViewPositionWithTouchView:(CarCellView*)touchView{
@@ -462,6 +463,8 @@
     [self moveCarIntoCarPosion];
     [self.serveRefreshBt setBackgroundImage:[UIImage imageNamed:@"posinTitlegraybg.png"] forState:UIControlStateHighlighted];
     [self.serveRefreshBt setBackgroundImage:Nil forState:UIControlStateNormal];
+    self.leftTopScrollView.contentInset = UIEdgeInsetsMake(0, SCROLLVIEW_LEFT_PADDING, 0, 0);
+    self.bottomLeftScrollView.contentInset = UIEdgeInsetsMake(0, SCROLLVIEW_LEFT_PADDING, 0, 0);
 	// Do any additional setup after loading the view.
 }
 #else
@@ -473,6 +476,14 @@
     self.leftTopScrollView.tag = -1;
     self.bottomLeftScrollView.tag = -1;
 
+    self.leftTopScrollView.contentInset = UIEdgeInsetsMake(0, SCROLLVIEW_LEFT_PADDING, 0, 0);
+    self.bottomLeftScrollView.contentInset = UIEdgeInsetsMake(0, SCROLLVIEW_LEFT_PADDING, 0, 0);
+    [self.topVerticalLabel setInset:UIEdgeInsetsMake(10, 0, 10, 0)];
+    [self.middleVerticalLabel setInset:UIEdgeInsetsMake(10, 0, 10, 0)];
+    [self.bottomVerticalLabel setInset:UIEdgeInsetsMake(10, 0, 10, 0)];
+    [self.topVerticalLabel setText:@"等待服务" withTextColor:[UIColor redColor]];
+    [self.middleVerticalLabel setText:@"服务中" withTextColor:[UIColor colorWithRed:72/255.0 green:207/255.0 blue:173/255.0 alpha:1]];
+    [self.bottomVerticalLabel setText:@"等待付款" withTextColor:[UIColor blueColor]];
     //退出登录
     self.navigationItem.rightBarButtonItems = nil;
     [self addRightnaviItemsWithImage:@"back"];
@@ -1039,6 +1050,7 @@ static NSMutableDictionary *finish_dic = nil;
 #pragma mark ServeItemViewDelegate
 
 -(void)serveItemView:(ServeItemView *)itemView didSelectedItemAtIndexPath:(NSIndexPath *)path{
+    [self.carNumberTextField.textField resignFirstResponder];
     for (int index = 0;index < [self.dataArray count];index++) {
         ServiceModel *model = [self.dataArray objectAtIndex:index];
         if (index != path.row) {
