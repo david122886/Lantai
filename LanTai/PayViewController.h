@@ -17,16 +17,19 @@
     
 }
 
-@property (nonatomic,strong) IBOutlet UILabel *lblCarNum,*lblBrand,*lblUsername,*lblPhone,*lblStart,*lblEnd,*lblTotal;
+@property (nonatomic,strong) IBOutlet UILabel *lblCarNum;
 @property (nonatomic,strong) IBOutlet UITableView *productTable;
 @property (nonatomic,strong) NSMutableArray *productList;
 @property (nonatomic,strong) NSMutableDictionary *orderInfo;
 @property (nonatomic,assign) CGFloat total_count;
-@property (nonatomic,strong) IBOutlet UIView *pleaseView,*orderBgView;
+@property (nonatomic,strong) IBOutlet UIView *pleaseView;
+@property (nonatomic,strong) IBOutlet UIView *orderBgView;
 @property (nonatomic,strong) IBOutlet UISegmentedControl *segBtn;
 
-@property (nonatomic,strong) IBOutlet UILabel *start_lab,*end_lab;
-
+@property (nonatomic,strong) IBOutlet UILabel *lblService,*lblTotal;
+@property (nonatomic,strong) NSString *serviceName;
+@property (nonatomic,strong) NSString *car_num;
+@property (nonatomic,strong) NSString *payString;
 
 @property (nonatomic,assign) CGFloat total_count_temp;
 @property (nonatomic,strong) NSString *orderId;

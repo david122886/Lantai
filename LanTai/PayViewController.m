@@ -10,18 +10,22 @@
 #import "UIViewController+MJPopupViewController.h"
 #import "ComplaintViewController.h"
 #import "PayStyleViewController.h"
+#import "CarObj.h"
 
 #define OPEN 100
 #define CLOSE 1000
 @interface PayViewController ()<PayStyleViewDelegate>{
     PayStyleViewController *payStyleView;
+    
 }
-
+@property (nonatomic,strong) NSMutableArray *waittingCarsArr;
+@property (nonatomic,strong) NSMutableDictionary *beginningCarsDic;
+@property (nonatomic,strong) NSMutableArray *finishedCarsArr;
 @end
 
 @implementation PayViewController
 
-@synthesize lblBrand,lblCarNum,lblEnd,lblPhone,lblStart,lblTotal,lblUsername;
+@synthesize lblCarNum,lblTotal,lblService;
 @synthesize productTable,productList,orderInfo,total_count;
 @synthesize segBtn,pleaseView,orderBgView;
 
@@ -33,9 +37,44 @@
     }
     return self;
 }
+-(CarObj *)setAttributeWithDictionary:(NSDictionary *)result {
+    CarObj *order = [[CarObj alloc]init];
+    order.carID = [NSString stringWithFormat:@"%@",[result objectForKey:@"car_num_id"]];
+    order.carPlateNumber = [NSString stringWithFormat:@"%@",[result objectForKey:@"num"]];
+    order.orderId = [NSString stringWithFormat:@"%@",[result objectForKey:@"id"]];
+    if (![[result objectForKey:@"station_id"]isKindOfClass:[NSNull class]] && [result objectForKey:@"station_id"]!=nil) {
+        order.stationId =[NSString stringWithFormat:@"%@",[result objectForKey:@"station_id"]];
+    }
+    order.serviceName = [NSString stringWithFormat:@"%@",[result objectForKey:@"service_name"]];
+    order.lastTime = [NSString stringWithFormat:@"%@",[result objectForKey:@"cost_time"]];
+    order.workOrderId = [NSString stringWithFormat:@"%@",[result objectForKey:@"wo_id"]];
+    if (![[result objectForKey:@"wo_started_at"]isKindOfClass:[NSNull class]] && [result objectForKey:@"wo_started_at"]!=nil) {
+        order.serviceStartTime = [NSString stringWithFormat:@"%@",[result objectForKey:@"wo_started_at"]];
+    }
+    if (![[result objectForKey:@"wo_ended_at"]isKindOfClass:[NSNull class]] && [result objectForKey:@"wo_ended_at"]!=nil) {
+        order.serviceEndTime = [NSString stringWithFormat:@"%@",[result objectForKey:@"wo_ended_at"]];
+    }
+    return order;
+}
 - (void)rightTapped:(id)sender{
     [DataService sharedService].refreshing = YES;
-    [self.navigationController popToRootViewControllerAnimated:YES];
+    [self.navigationController popViewControllerAnimated:YES];
+}
+-(void )addRightnaviItemsWithImage:(NSString *)imageName {
+    NSMutableArray *mycustomButtons = [NSMutableArray array];
+    if (imageName != nil && ![imageName isEqualToString:@""]) {
+        UIButton *btn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
+        [btn setImage:[UIImage imageNamed:imageName] forState:UIControlStateNormal];
+        [btn setImage:[UIImage imageNamed:[NSString stringWithFormat:@"%@_active", imageName]] forState:UIControlStateHighlighted];
+        btn.userInteractionEnabled = YES;
+        [btn addTarget:self action:@selector(rightTapped:) forControlEvents:UIControlEventTouchUpInside];
+        UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithCustomView:btn];
+        [mycustomButtons addObject: item];
+        btn = nil;
+        item = nil;
+    }
+    self.navigationItem.rightBarButtonItems=mycustomButtons;
+    [self.navigationItem setHidesBackButton:YES animated:YES];
 }
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -62,85 +101,90 @@
     //活动
     [DataService sharedService].saleArray = nil;
     [DataService sharedService].saleArray =[NSMutableArray array];
-}
-- (void)searchOrderByOrderID:(NSString *)orderId {
-    STHTTPRequest *r = [STHTTPRequest requestWithURLString:[NSString stringWithFormat:@"%@%@",kHost,kShowCar]];
-    [r setPOSTDictionary:[NSDictionary dictionaryWithObjectsAndKeys:[DataService sharedService].store_id,@"store_id",[DataService sharedService].user_id,@"user_id",orderId,@"order_id", nil]];
+    
+    if ([DataService sharedService].payNumber == 1) {
+        //评价，弹出框
+        payStyleView = nil;
+        payStyleView = [[PayStyleViewController alloc] initWithNibName:@"PayStyleViewController" bundle:nil];
+        payStyleView.delegate = self;
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        if (![[orderInfo objectForKey:@"order_id"] isKindOfClass:[NSNull class]] && [orderInfo objectForKey:@"order_id"]!= nil) {
+            [dic setObject:[orderInfo objectForKey:@"order_id"] forKey:@"order_id"];
+        }else {
+            [dic setObject:self.lblCarNum.text forKey:@"carNum"];
+            [dic setObject:[orderInfo objectForKey:@"order_code"] forKey:@"code"];
+        }
+        [dic setObject:[orderInfo objectForKey:@"order_code"] forKey:@"code"];
+        [dic setObject:[NSNumber numberWithInt:0] forKey:@"is_please"];
+        [dic setObject:[NSString stringWithFormat:@"%.2f",self.total_count] forKey:@"price"];
+        
+        payStyleView.order = [NSMutableDictionary dictionaryWithDictionary:dic];
+        [self presentPopupViewController:payStyleView animationType:MJPopupViewAnimationSlideBottomBottom];
+        
+        [DataService sharedService].payNumber = 0;
+    }
 }
 - (void)viewDidLoad
 {
     self.segBtn.momentary = YES;
     //生成订单，插入正在进行中的订单
     [DataService sharedService].refreshing = YES;
-    if (orderInfo) {
-        DLog(@"%@",orderInfo);
-        lblBrand.text = [orderInfo objectForKey:@"code"];
-        lblCarNum.text = [orderInfo objectForKey:@"car_num"];
-        lblUsername.text = [orderInfo objectForKey:@"username"];
-        lblStart.text = [orderInfo objectForKey:@"start"];
-        if (lblStart.text.length <= 0) {
-            self.start_lab.hidden = YES;
-        }else {
-            self.start_lab.hidden = NO;
-        }
-        lblEnd.text = [orderInfo objectForKey:@"end"];
-        if (lblEnd.text.length <= 0) {
-            self.end_lab.hidden = YES;
-        }else {
-            self.end_lab.hidden = NO;
-        }
-        lblTotal.text = [NSString stringWithFormat:@"总计：%.2f(元)",[[orderInfo objectForKey:@"total"] floatValue]];
-        
-        //请求与订单相关的活动，优惠卡等信息
-        if ([[Utils isExistenceNetwork] isEqualToString:@"NotReachable"]) {
-            [Utils errorAlert:@"暂无网络!"];
-        }else {
-            [self searchOrderByOrderID:self.orderId];
-        }
-        
-        //更新总价
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateTotal:) name:@"update_total" object:nil];
-        //套餐卡
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableView:) name:@"reloadTableView" object:nil];
-        //活动
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(saleReloadTableView:) name:@"saleReloadTableView" object:nil];
-        //打折卡
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(scardReloadTableView:) name:@"scardReloadTableView" object:nil];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(saleReload:) name:@"saleReload" object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(packageCardreloadTableView:) name:@"packageCardreloadTableView" object:nil];
-        
-        
-        
-        self.productList = [NSMutableArray array];
-        if ([orderInfo objectForKey:@"products"]) {
-            [productList addObjectsFromArray:[orderInfo objectForKey:@"products"]];
-        }
-        if ([orderInfo objectForKey:@"sale"]) {
-            [productList addObject:[orderInfo objectForKey:@"sale"]];
-        }
-        if ([orderInfo objectForKey:@"c_svc_relation"]) {
-            [productList addObjectsFromArray:[orderInfo objectForKey:@"c_svc_relation"]];
-        }
-        if ([orderInfo objectForKey:@"c_pcard_relation"]) {
-            [productList addObjectsFromArray:[orderInfo objectForKey:@"c_pcard_relation"]];
-        }
-    }
-    DLog(@"%@",productList);
+    [DataService sharedService].first = YES;
+    
+    DLog(@"orderInfo = %@",self.orderInfo);
+    self.lblCarNum.text = self.car_num;
+    self.lblService.text = self.serviceName;
+    self.lblTotal.text = [NSString stringWithFormat:@"总计：%.2f(元)",self.total_count];
+    //更新总价
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateTotal:) name:@"update_total" object:nil];
+    //套餐卡
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableView:) name:@"reloadTableView" object:nil];
+    //活动
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(saleReloadTableView:) name:@"saleReloadTableView" object:nil];
+    //打折卡
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(scardReloadTableView:) name:@"scardReloadTableView" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(saleReload:) name:@"saleReload" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(packageCardreloadTableView:) name:@"packageCardreloadTableView" object:nil];
+    
     [super viewDidLoad];
     if (![self.navigationItem rightBarButtonItem]) {
-//        [self addRightnaviItemsWithImage:@"back" andImage:nil];
+        [self addRightnaviItemsWithImage:@"back"];
     }
-    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"view_bg"]];
     self.orderBgView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"confirm_bg"]];
+    
+    //    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hideKeyBord)];
+    //    [self.view addGestureRecognizer:tap];
 }
-
+-(void)hideKeyBord {
+    NSArray *subViews = [self.productTable subviews];
+    if (subViews.count >0) {
+        for (UIView *v in subViews) {
+            if ([v isKindOfClass:[UITableViewCell class]]) {
+                UITableViewCell *cell = (UITableViewCell *)v;
+                NSArray *subView = [cell.contentView subviews];
+                if (subView.count>0) {
+                    for (UIView *vv in subView) {
+                        if ([vv isKindOfClass:[UITextField class]]) {
+                            UITextField *txt = (UITextField *)vv;
+                            [txt resignFirstResponder];
+                        }
+                    }
+                }
+                
+            }
+        }
+    }
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
+-(void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    [DataService sharedService].first = NO;
+}
 #pragma mark -  tabledelegate
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -188,7 +232,7 @@
         static NSString *CellIdentifier = @"ServiceCell";
         ServiceCell *cell = (ServiceCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
         if (cell == nil) {
-            cell = [[ServiceCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier with:product indexPath:indexPath type:0];
+            cell = [[ServiceCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier with:product indexPath:indexPath type:1];
         }
         cell.lblName.text = [product objectForKey:@"name"];
         cell.lblPrice.text = [NSString stringWithFormat:@"%@",[product objectForKey:@"price"]];
@@ -431,29 +475,31 @@
         ComplaintViewController *complaint = [[ComplaintViewController alloc] initWithNibName:@"ComplaintViewController" bundle:nil];
         NSMutableDictionary *dic = [NSMutableDictionary dictionary];
         [dic setObject:self.lblCarNum.text forKey:@"carNum"];
-        [dic setObject:[orderInfo objectForKey:@"code"] forKey:@"code"];
+        [dic setObject:[orderInfo objectForKey:@"order_code"] forKey:@"code"];
+        if (![[orderInfo objectForKey:@"order_id"] isKindOfClass:[NSNull class]] && [orderInfo objectForKey:@"order_id"]!= nil){
+            [dic setObject:[orderInfo objectForKey:@"order_id"] forKey:@"order_id"];
+        }
         [dic setObject:@"0" forKey:@"from"];
-        
+        [dic setObject:self.lblService.text forKey:@"prods"];
         complaint.info = [NSMutableDictionary dictionaryWithDictionary:dic];
         [self.navigationController pushViewController:complaint animated:YES];
     }else if (sender.selectedSegmentIndex == 1 || sender.selectedSegmentIndex == 2 || sender.selectedSegmentIndex == 3){
+        self.payString = [self checkForm];
         //评价，弹出框
         payStyleView = nil;
         payStyleView = [[PayStyleViewController alloc] initWithNibName:@"PayStyleViewController" bundle:nil];
         payStyleView.delegate = self;
-        payStyleView.codeStr = self.lblBrand.text;
         NSMutableDictionary *dic = [NSMutableDictionary dictionary];
-        if (![[orderInfo objectForKey:@"id"] isKindOfClass:[NSNull class]] && [orderInfo objectForKey:@"id"]!= nil){
-            [dic setObject:[orderInfo objectForKey:@"id"] forKey:@"order_id"];
+        if (![[orderInfo objectForKey:@"order_id"] isKindOfClass:[NSNull class]] && [orderInfo objectForKey:@"order_id"]!= nil){
+            [dic setObject:[orderInfo objectForKey:@"order_id"] forKey:@"order_id"];
         }else {
-            [dic setObject:self.lblCarNum.text forKey:@"carNum"];
-            [dic setObject:[orderInfo objectForKey:@"code"] forKey:@"code"];
+            
+            [dic setObject:[orderInfo objectForKey:@"order_code"] forKey:@"code"];
         }
+        [dic setObject:self.lblCarNum.text forKey:@"carNum"];
+        [dic setObject:self.payString forKey:@"prods"];
         [dic setObject:[NSNumber numberWithInt:sender.selectedSegmentIndex] forKey:@"is_please"];
-        [dic setObject:[orderInfo objectForKey:@"total"] forKey:@"price"];
-        if (![[orderInfo objectForKey:@"content"] isKindOfClass:[NSNull class]] && [orderInfo objectForKey:@"content"]!= nil) {
-            [dic setObject:[orderInfo objectForKey:@"content"] forKey:@"content"];
-        }
+        [dic setObject:[NSString stringWithFormat:@"%.2f",self.total_count] forKey:@"price"];
         payStyleView.order = [NSMutableDictionary dictionaryWithDictionary:dic];
         
         [self presentPopupViewController:payStyleView animationType:MJPopupViewAnimationSlideBottomBottom];
@@ -485,17 +531,65 @@
 #pragma mark -取消订单（排队等待中）
 -(void)cancleOrderr {
     STHTTPRequest *r = [STHTTPRequest requestWithURLString:[NSString stringWithFormat:@"%@%@",kHost,kPayOrder]];
-    [r setPOSTDictionary:[NSDictionary dictionaryWithObjectsAndKeys:[orderInfo objectForKey:@"id"],@"order_id",@"1",@"opt_type", nil]];
+    [r setPOSTDictionary:[NSDictionary dictionaryWithObjectsAndKeys:[orderInfo objectForKey:@"order_id"],@"order_id",@"1",@"opt_type", nil]];
     [r setPostDataEncoding:NSUTF8StringEncoding];
     NSError *error = nil;
     NSDictionary *result = [[r startSynchronousWithError:&error] objectFromJSONString];
     if ([[result objectForKey:@"status"] intValue]==1) {
+        
         [AHAlertView applyCustomAlertAppearance];
         AHAlertView *alertt = [[AHAlertView alloc] initWithTitle:kTip message:@"订单已取消"];
         __block AHAlertView *alert = alertt;
         [alertt setCancelButtonTitle:@"确定" block:^{
             alert.dismissalStyle = AHAlertViewDismissalStyleTumble;
             alert = nil;
+            NSDictionary *order_dic = [result objectForKey:@"orders"];
+            NSMutableDictionary *dic = [[NSMutableDictionary alloc]init];
+            //排队等候
+            if (![[order_dic objectForKey:@"0"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"0"]!= nil) {
+                NSArray *waiting_array = [order_dic objectForKey:@"0"];
+                if (waiting_array.count>0) {
+                    self.waittingCarsArr = [[NSMutableArray alloc]init];
+                    for (int i=0; i<waiting_array.count; i++) {
+                        NSDictionary *resultt = [waiting_array objectAtIndex:i];
+                        CarObj *order = [self setAttributeWithDictionary:resultt];
+                        [self.waittingCarsArr addObject:order];
+                    }
+                    [dic setObject:self.waittingCarsArr forKey:@"wait"];
+                    //                    [self setWaittingScrollViewContext];
+                }
+            }
+            //施工中
+            if (![[order_dic objectForKey:@"1"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"1"]!= nil) {
+                NSArray *working_array = [order_dic objectForKey:@"1"];
+                if (working_array.count>0) {
+                    self.beginningCarsDic = [[NSMutableDictionary alloc]init];
+                    for (int i=0; i<working_array.count; i++) {
+                        NSDictionary *resultt = [working_array objectAtIndex:i];
+                        CarObj *order = [self setAttributeWithDictionary:resultt];
+                        [self.beginningCarsDic setObject:order forKey:order.stationId];
+                    }
+                    [dic setObject:self.beginningCarsDic forKey:@"work"];
+                    //                    [self moveCarIntoCarPosion];
+                }
+            }
+            //等待付款
+            if (![[order_dic objectForKey:@"2"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"2"]!= nil) {
+                
+                NSArray *finish_array = [order_dic objectForKey:@"2"];
+                if (finish_array.count>0) {
+                    self.finishedCarsArr = [[NSMutableArray alloc]init];
+                    for (int i=0; i<finish_array.count; i++) {
+                        NSDictionary *resultt = [finish_array objectAtIndex:i];
+                        CarObj *order = [self setAttributeWithDictionary:resultt];
+                        [self.finishedCarsArr addObject:order];
+                    }
+                    [dic setObject:self.finishedCarsArr forKey:@"finish"];
+                    //                    [self setFinishedScrollViewContext];
+                }
+            }
+            
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"reloadArray" object:dic];
             [self.navigationController popToRootViewControllerAnimated:YES];
         }];
         [alertt show];
@@ -506,39 +600,20 @@
     [MBProgressHUD hideHUDForView:self.view animated:YES];
 }
 
-/*
--(void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-    if ([DataService sharedService].payNumber == 1) {
-        //评价，弹出框
-        payStyleView = nil;
-        payStyleView = [[PayStyleViewController alloc] initWithNibName:@"PayStyleViewController" bundle:nil];
-        payStyleView.delegate = self;
-        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
-        if (![[orderInfo objectForKey:@"id"] isKindOfClass:[NSNull class]] && [orderInfo objectForKey:@"id"]!= nil) {
-            [dic setObject:[orderInfo objectForKey:@"id"] forKey:@"order_id"];
-        }else {
-            [dic setObject:self.lblCarNum.text forKey:@"carNum"];
-            [dic setObject:[orderInfo objectForKey:@"code"] forKey:@"code"];
-        }
-        [dic setObject:[orderInfo objectForKey:@"code"] forKey:@"code"];
-        [dic setObject:[NSNumber numberWithInt:0] forKey:@"is_please"];
-        [dic setObject:[orderInfo objectForKey:@"total"] forKey:@"price"];
-        if (![[orderInfo objectForKey:@"content"] isKindOfClass:[NSNull class]] && [orderInfo objectForKey:@"content"]!= nil) {
-            [dic setObject:[orderInfo objectForKey:@"content"] forKey:@"content"];
-        }
-        
-        payStyleView.order = [NSMutableDictionary dictionaryWithDictionary:dic];
-        [self presentPopupViewController:payStyleView animationType:MJPopupViewAnimationSlideBottomBottom];
-        
-        [DataService sharedService].payNumber = 0;
-    }
-}
-*/
-
 - (void)closePopVieww:(PayStyleViewController *)payStyleViewController{
     [self dismissPopupViewControllerWithanimationType:MJPopupViewAnimationSlideBottomTop];
     if (payStyleViewController.isSuccess) {
+        NSMutableDictionary *dic = [[NSMutableDictionary alloc]init];
+        if (payStyleViewController.waittingCarsArr.count>0) {
+            [dic setObject:payStyleViewController.waittingCarsArr forKey:@"wait"];
+        }
+        if (payStyleViewController.beginningCarsDic.allKeys.count>0) {
+            [dic setObject:payStyleViewController.waittingCarsArr forKey:@"work"];
+        }
+        if (payStyleViewController.finishedCarsArr.count>0) {
+            [dic setObject:payStyleViewController.finishedCarsArr forKey:@"finish"];
+        }
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"reloadArray" object:dic];
         [self.navigationController popToRootViewControllerAnimated:YES];
     }
     payStyleView = nil;
