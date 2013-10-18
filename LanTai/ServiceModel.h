@@ -12,4 +12,5 @@
 @property (nonatomic, strong) NSString *serviceId;
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSString *price;
+@property (nonatomic,assign) BOOL isSelected;
 @end

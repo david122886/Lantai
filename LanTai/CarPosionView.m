@@ -7,7 +7,7 @@
 //
 
 #import "CarPosionView.h"
-
+#import <QuartzCore/QuartzCore.h>
 #define  CAR_PADDING 5
 #define CAR_CARPADDING 40
 #define CAR_TITLE_HEIGHT 35
@@ -21,6 +21,7 @@
 @property(nonatomic,strong) UIView *titileBackView;
 @property(nonatomic,strong) UILabel *coverLabel;
 @property(nonatomic,strong) UILabel *serveNameLabel;
+@property(nonatomic,strong) UIImageView *carImageView;
 @end
 
 
@@ -32,33 +33,41 @@
     if (self) {
         // Initialization code
         self.titileBackView = [[UIView alloc] initWithFrame:CGRectZero];
-        self.titileBackView.backgroundColor = [UIColor orangeColor];
+        //        self.titileBackView.backgroundColor = [UIColor orangeColor];
+        self.titileBackView.layer.shadowColor = [UIColor darkGrayColor].CGColor;
+        self.titileBackView.layer.shadowOffset = (CGSize){0,2};
+        self.titileBackView.layer.shadowOpacity = 1;
         [self addSubview:self.titileBackView];
         
         self.serveNameLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         [self.serveNameLabel setTextAlignment:NSTextAlignmentCenter];
         [self.serveNameLabel setFont:[UIFont systemFontOfSize:CAR_FONT_SIZE]];
-        self.serveNameLabel.backgroundColor = [UIColor orangeColor];
+        //        self.serveNameLabel.backgroundColor = [UIColor orangeColor];
+        self.serveNameLabel.backgroundColor = [UIColor clearColor];
         [self addSubview:self.serveNameLabel];
         
         self.posinIDLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-        self.posinIDLabel.backgroundColor = [UIColor redColor];
+        //        self.posinIDLabel.backgroundColor = [UIColor redColor];
+        self.posinIDLabel.backgroundColor = [UIColor clearColor];
         [self.posinIDLabel setFont:[UIFont systemFontOfSize:CAR_FONT_SIZE]];
         [self.titileBackView addSubview:self.posinIDLabel];
         
         self.posionDateImageView = [[UIImageView alloc] initWithFrame:CGRectZero];
-//        self.posionDateImageView.backgroundColor = [UIColor blueColor];
+        //        self.posionDateImageView.backgroundColor = [UIColor blueColor];
         self.posionDateImageView.image = [UIImage imageNamed:@"clock.png"];
         [self.titileBackView addSubview:self.posionDateImageView];
         
         self.posinDateLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-        self.posinDateLabel.backgroundColor = [UIColor purpleColor];
+        //        self.posinDateLabel.backgroundColor = [UIColor purpleColor];
+        self.posinDateLabel.backgroundColor = [UIColor clearColor];
         [self.posinDateLabel setFont:[UIFont systemFontOfSize:CAR_FONT_SIZE]];
         [self.titileBackView addSubview:self.posinDateLabel];
         
-       
+        self.carImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"grayCar.png"]];
+        [self addSubview:self.carImageView];
         self.carView = [[CarCellView alloc]initWithFrame:CGRectZero];
-        self.carView.backgroundColor = [UIColor darkGrayColor];
+        //        self.carView.backgroundColor = [UIColor darkGrayColor];
+        self.carView.backgroundColor = [UIColor clearColor];
         [self addSubview:self.carView];
         
         self.coverLabel = [[UILabel alloc] initWithFrame:CGRectZero];
@@ -66,6 +75,7 @@
         [self.coverLabel setFont:[UIFont systemFontOfSize:CAR_FONT_SIZE]];
         self.coverLabel.text = @"暂无";
         [self.coverLabel setTextAlignment:NSTextAlignmentCenter];
+        self.coverLabel.textColor = [UIColor darkGrayColor];
         self.coverLabel.backgroundColor = [UIColor clearColor];
         [self addSubview:self.coverLabel];
     }
@@ -94,23 +104,31 @@
     self.carView.frame = (CGRect){CAR_CARPADDING,CAR_CARPADDING+CGRectGetMaxY(self.titileBackView.frame),carWidth,carHeight};
     self.coverLabel.frame = (CGRect){0,0,self.frame.size.width,CAR_TITLE_HEIGHT};
     self.coverLabel.center = self.carView.center;
+    self.carImageView.frame = self.carView.frame;
 }
 
 -(void)setIsEmpty:(BOOL)isEmpty{
     _isEmpty = isEmpty;
     if (isEmpty) {
-        [self.titileBackView setBackgroundColor:[UIColor clearColor]];
+        [self.titileBackView setBackgroundColor:[UIColor colorWithRed:246/255.0 green:248/255.0 blue:250/255.0 alpha:1]];
+//        [self.titileBackView setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"posinTitlegraybg.png"]]];
         self.carView.state = CARNOTHING;
         self.serveNameLabel.text = nil;
         self.posinDateLabel.text = @"00:00";
         self.serveNameLabel.text = nil;
+        self.posinIDLabel.textColor = [UIColor darkGrayColor];
+        self.posinDateLabel.textColor = [UIColor darkGrayColor];
     }else{
-        [self.titileBackView setBackgroundColor:[UIColor yellowColor]];
         self.posinDateLabel.text = self.posionDate;
         self.carView.state = CARBEGINNING;
         self.serveNameLabel.text = self.posionServeName;
+        self.titileBackView.backgroundColor = [UIColor colorWithRed:72/255.0 green:207/255.0 blue:173/255.0 alpha:1];
+//        [self.titileBackView setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"posionTitlegreenbg.png"]]];
+        self.posinIDLabel.textColor = [UIColor whiteColor];
+        self.posinDateLabel.textColor = [UIColor whiteColor];
     }
     [self.coverLabel setHidden:!isEmpty];
+    [self.carImageView setHidden:!isEmpty];
 }
 
 -(void)setPosionID:(int)posionID{
