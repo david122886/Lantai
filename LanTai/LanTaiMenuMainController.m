@@ -16,7 +16,7 @@
 #import "ServiceModel.h"
 #import "CarPosionView.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #define CELL_WIDHT  250
 #define CELL_POSION_WIDHT  250
 #define CELL_HEIGHT 134

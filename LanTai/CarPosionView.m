@@ -18,7 +18,7 @@
 
 @property(nonatomic,strong) UILabel *posinDateLabel;
 @property(nonatomic,strong) UIImageView *posionDateImageView;
-@property(nonatomic,strong) UIView *titileBackView;
+@property(nonatomic,strong) UIImageView *titileBackView;
 @property(nonatomic,strong) UILabel *coverLabel;
 @property(nonatomic,strong) UILabel *serveNameLabel;
 @property(nonatomic,strong) UIImageView *carImageView;
@@ -32,12 +32,13 @@
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
-        self.titileBackView = [[UIView alloc] initWithFrame:CGRectZero];
+        self.titileBackView = [[UIImageView alloc] initWithFrame:CGRectZero];
         //        self.titileBackView.backgroundColor = [UIColor orangeColor];
-        self.titileBackView.layer.shadowColor = [UIColor darkGrayColor].CGColor;
-        self.titileBackView.layer.shadowOffset = (CGSize){0,2};
-        self.titileBackView.layer.shadowOpacity = 1;
+//        self.titileBackView.layer.shadowColor = [UIColor darkGrayColor].CGColor;
+//        self.titileBackView.layer.shadowOffset = (CGSize){0,2};
+//        self.titileBackView.layer.shadowOpacity = 1;
         [self addSubview:self.titileBackView];
+        [self.titileBackView setBackgroundColor:[UIColor clearColor]];
         
         self.serveNameLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         [self.serveNameLabel setTextAlignment:NSTextAlignmentCenter];
@@ -110,8 +111,9 @@
 -(void)setIsEmpty:(BOOL)isEmpty{
     _isEmpty = isEmpty;
     if (isEmpty) {
-        [self.titileBackView setBackgroundColor:[UIColor colorWithRed:246/255.0 green:248/255.0 blue:250/255.0 alpha:1]];
-//        [self.titileBackView setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"posinTitlegraybg.png"]]];
+//        [self.titileBackView setBackgroundColor:[UIColor colorWithRed:246/255.0 green:248/255.0 blue:250/255.0 alpha:1]];
+        [self.titileBackView setImage:[[UIImage imageNamed:@"posinTitlegraybg.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 20, 0)]];
+//        [self.titileBackView setBackgroundColor:[UIColor colorWithPatternImage:[[UIImage imageNamed:@"posinTitlegraybg.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 20, 0)]]];
         self.carView.state = CARNOTHING;
         self.serveNameLabel.text = nil;
         self.posinDateLabel.text = @"00:00";
@@ -122,8 +124,9 @@
         self.posinDateLabel.text = self.posionDate;
         self.carView.state = CARBEGINNING;
         self.serveNameLabel.text = self.posionServeName;
-        self.titileBackView.backgroundColor = [UIColor colorWithRed:72/255.0 green:207/255.0 blue:173/255.0 alpha:1];
-//        [self.titileBackView setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"posionTitlegreenbg.png"]]];
+//        self.titileBackView.backgroundColor = [UIColor colorWithRed:72/255.0 green:207/255.0 blue:173/255.0 alpha:1];
+        [self.titileBackView setImage:[[UIImage imageNamed:@"posionTitlegreenbg.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 2, 0)]];
+//        [self.titileBackView setBackgroundColor:[UIColor colorWithPatternImage:[[UIImage imageNamed:@"posionTitlegreenbg.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 2, 0)]]];
         self.posinIDLabel.textColor = [UIColor whiteColor];
         self.posinDateLabel.textColor = [UIColor whiteColor];
     }
@@ -142,7 +145,14 @@
         
         self.carView.carNumber = car.carPlateNumber;
         self.carView.state = CARBEGINNING;
-        self.posionDate = car.serviceStartTime;
+        NSDateFormatter *form = [[NSDateFormatter alloc] init];
+        [form setDateFormat:@"YYYY-MM-DD HH:mm:ss"];
+        NSDate *date = [form dateFromString:car.serviceStartTime?:@"00:00"];
+        NSCalendar *calendar = [NSCalendar currentCalendar];
+        NSDateComponents *components = [calendar components:(NSHourCalendarUnit | NSMinuteCalendarUnit) fromDate:date];
+        NSInteger hour = [components hour];
+        NSInteger minute = [components minute];
+        self.posionDate = [NSString stringWithFormat:@"%d:%d",hour,minute];
         self.posionServeName = car.serviceName;
         self.isEmpty = NO;
     }else{

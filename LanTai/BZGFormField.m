@@ -164,7 +164,7 @@ alpha:1.0]
 
         CGFloat textFieldX = self.bounds.size.height*(_currentLeftIndicatorAspectRatio+self.leftIndicatorRightPadding);
         self.textField.frame = CGRectMake(self.bounds.origin.x + textFieldX,
-                                          self.bounds.origin.y,
+                                          CGRectGetHeight(self.frame)/2-8,
                                           self.bounds.size.width - textFieldX,
                                           self.bounds.size.height);
 

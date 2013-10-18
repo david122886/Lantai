@@ -23,10 +23,10 @@
 -(void)layoutSubviews{
     [super layoutSubviews];
     [self.serveBt addTarget:self action:@selector(buttonClicked) forControlEvents:UIControlEventTouchUpInside];
-    self.serveBt.layer.cornerRadius = 10;
-    self.serveBt.layer.shadowColor = [UIColor blackColor].CGColor;
-    self.serveBt.layer.shadowOffset = (CGSize){2,5};
-    self.serveBt.layer.shadowOpacity = 1;
+//    self.serveBt.layer.cornerRadius = 10;
+//    self.serveBt.layer.shadowColor = [UIColor blackColor].CGColor;
+//    self.serveBt.layer.shadowOffset = (CGSize){2,5};
+//    self.serveBt.layer.shadowOpacity = 1;
     [self.serveBt setBackgroundImage:[UIImage imageNamed:@"posinTitlegraybg.png"] forState:UIControlStateHighlighted];
 }
 /*

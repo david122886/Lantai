@@ -1,26 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4510" systemVersion="12F45" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" initialViewController="6Pl-5f-bc1">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4510" systemVersion="12F45" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" initialViewController="7DJ-NK-eL9">
     <dependencies>
         <deployment defaultVersion="1552" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3742"/>
     </dependencies>
     <scenes>
-        <!--Navigation Controller-->
-        <scene sceneID="Yjx-yi-3gH">
-            <objects>
-                <navigationController definesPresentationContext="YES" id="6Pl-5f-bc1" sceneMemberID="viewController">
-                    <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Iwk-eP-wO1">
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <connections>
-                        <segue destination="bG0-JO-yZG" kind="relationship" relationship="rootViewController" id="x5V-y2-19T"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="ASy-9X-FcD" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-1920" y="693"/>
-        </scene>
         <!--Init View Controller-->
         <scene sceneID="Arw-TF-nTK">
             <objects>
@@ -81,7 +65,7 @@
                             </imageView>
                             <view contentMode="scaleToFill" id="7ki-ct-ohR" userLabel="Viewright">
                                 <rect key="frame" x="827" y="47" width="197" height="721"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" heightSizable="YES" flexibleMaxY="YES"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" id="HO5-JB-lct">
                                         <rect key="frame" x="0.0" y="0.0" width="197" height="99"/>
@@ -135,7 +119,7 @@
                                     </tableView>
                                     <view contentMode="scaleToFill" id="Izb-VW-deU" userLabel="buttonView">
                                         <rect key="frame" x="0.0" y="654" width="197" height="67"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                         <subviews>
                                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="refreshbg.png" id="1y8-Id-DER">
                                                 <rect key="frame" x="0.0" y="0.0" width="197" height="67"/>
@@ -152,10 +136,11 @@
                                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Ib1-P2-6cu">
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Ib1-P2-6cu">
                                                 <rect key="frame" x="0.0" y="0.0" width="197" height="67"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                 <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                                 <connections>
                                                     <action selector="refreshServeItemsBtClicked:" destination="bG0-JO-yZG" eventType="touchUpInside" id="Yks-tc-wgR"/>
@@ -170,7 +155,7 @@
                             </view>
                             <view contentMode="scaleToFill" id="8kV-1Z-qPU" userLabel="Viewleft">
                                 <rect key="frame" x="39" y="43" width="787" height="725"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" heightSizable="YES" flexibleMaxY="YES"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <view alpha="0.89999999999999991" contentMode="scaleToFill" id="uAq-XF-htU" userLabel="middlebgview">
                                         <rect key="frame" x="0.0" y="144" width="787" height="440"/>
