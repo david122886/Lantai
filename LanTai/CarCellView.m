@@ -21,7 +21,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
-        self.backgroundColor = [UIColor redColor];
+        self.backgroundColor = [UIColor clearColor];
         self.carImageView = [[UIImageView alloc]initWithFrame:CGRectZero];
         [self addSubview:self.carImageView];
         

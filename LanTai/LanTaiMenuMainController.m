@@ -229,7 +229,7 @@
     }
     for (int index = 0; index < [self.waittingCarsArr count]; index++) {
         CarCellView *view = [[CarCellView alloc] init];
-        view.frame = (CGRect){CELL_PADDING+(CELL_WIDHT+CELL_PADDING)*index,CELL_PADDING*2,CELL_WIDHT,CELL_HEIGHT-CELL_PADDING*4};
+        view.frame = (CGRect){CELL_PADDING+(CELL_WIDHT+CELL_PADDING)*index,CELL_PADDING*4,CELL_WIDHT,CELL_HEIGHT-CELL_PADDING*4};
         view.tag = index;
         CarObj *obj = [self.waittingCarsArr objectAtIndex:index];
         view.carNumber = obj.carPlateNumber;
@@ -255,6 +255,8 @@
         view.isEmpty = YES;
         view.frame = [self getBeginningScrollViewItemRectWithIndex:index];
         view.backgroundColor = [UIColor whiteColor];
+        view.layer.shadowColor = [UIColor darkGrayColor].CGColor;
+        view.layer.shadowOffset = (CGSize){0,2};
         [self.leftBackgroundView addSubview:view];
         [self.posionItemArr addObject:view];
     }
@@ -322,7 +324,7 @@
 -(CGRect)getBeginningScrollViewItemRectWithIndex:(int)index{
     
     float height = (708 -CGRectGetHeight(self.bottomLeftScrollView.frame)*2 - CELL_PADDING*3)/2;
-    return (CGRect){CELL_PADDING+(CELL_POSION_WIDHT+CELL_PADDING)*(index/2),CELL_HEIGHT+CELL_PADDING+(height+CELL_PADDING)*(index%2),CELL_POSION_WIDHT,height};
+    return (CGRect){CELL_PADDING+(CELL_POSION_WIDHT+CELL_PADDING)*(index/2),CGRectGetMaxY(self.leftTopScrollView.frame)+CELL_PADDING*2+(height+CELL_PADDING)*(index%2),CELL_POSION_WIDHT,height};
 }
 
 -(void)exchangeBeginningCarCellViewPositionWithTouchView:(CarCellView*)touchView{
@@ -422,6 +424,7 @@
         obj.carPlateNumber = [NSString stringWithFormat:@"EG%d",index];
         obj.carID = [NSString stringWithFormat:@"%d",index];
         obj.serviceName = @"洗车";
+        obj.serviceStartTime = @"06:00";
         [self.waittingCarsArr addObject:obj];
     }
     for (int index = 0; index < 6; index++) {
@@ -429,6 +432,7 @@
         obj.carPlateNumber = [NSString stringWithFormat:@"EG%d",index];
         obj.carID = [NSString stringWithFormat:@"%d",index];
         obj.serviceName = @"洗车";
+        obj.serviceStartTime = @"06:00";
         [self.beginningCarsDic setValue:obj forKey:[self.stationArray objectAtIndex:index]];
     }
     for (int index = 0; index < 20; index++) {
@@ -436,12 +440,20 @@
         obj.carPlateNumber = [NSString stringWithFormat:@"EG%d",index];
         obj.carID = [NSString stringWithFormat:@"%d",index];
         obj.serviceName = @"洗车";
+        obj.serviceStartTime = @"06:00";
         [self.finishedCarsArr addObject:obj];
     }
     
     for (int index = 0; index < 20; index++) {
         [self.serveItemsArr addObject:@"便捷洗车"];
     }
+    
+    for (int index = 0; index < 20; index++) {
+        ServiceModel *model = [[ServiceModel alloc] init];
+        model.name = @"便捷洗车";
+        [self.dataArray addObject:model];
+    }
+    [self.orderTable reloadData];
 }
 #else
 
@@ -458,12 +470,16 @@
     [self setWaittingScrollViewContext];
     [self setFinishedScrollViewContext];
     [self moveCarIntoCarPosion];
+    [self.serveRefreshBt setBackgroundImage:[UIImage imageNamed:@"posinTitlegraybg.png"] forState:UIControlStateHighlighted];
+    [self.serveRefreshBt setBackgroundImage:Nil forState:UIControlStateNormal];
 	// Do any additional setup after loading the view.
 }
 #else
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [self.serveRefreshBt setBackgroundImage:[UIImage imageNamed:@"posinTitlegraybg.png"] forState:UIControlStateHighlighted];
+    [self.serveRefreshBt setBackgroundImage:Nil forState:UIControlStateNormal];
     self.leftTopScrollView.tag = -1;
     self.bottomLeftScrollView.tag = -1;
     //    [self testController];
@@ -716,6 +732,13 @@
     }
     return _stationArray;
 }
+
+-(NSMutableArray *)dataArray{
+    if (!_dataArray) {
+        _dataArray = [NSMutableArray array];
+    }
+    return _dataArray;
+}
 #pragma mark --
 
 - (IBAction)refreshServeItemsBtClicked:(id)sender {
@@ -961,29 +984,21 @@ static NSString *work_order_id = nil;
     [MBProgressHUD hideHUDForView:self.view animated:YES];
 }
 #pragma mark --
-#pragma mark -- tableView
-static NSString *service_id = nil;
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return self.dataArray.count;
-}
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    NSString *CellIdentifier =[NSString stringWithFormat:@"Cell%d%d",indexPath.section,indexPath.row];
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+#pragma mark ServeItemViewDelegate
+
+-(void)serveItemView:(ServeItemView *)itemView didSelectedItemAtIndexPath:(NSIndexPath *)path{
+    for (int index = 0;index < [self.dataArray count];index++) {
+        ServiceModel *model = [self.dataArray objectAtIndex:index];
+        if (index != path.row) {
+            model.isSelected = NO;
+        }else{
+            model.isSelected = YES;
+        }
     }
-    ServiceModel *service = (ServiceModel *)[self.dataArray objectAtIndex:indexPath.row];
-    cell.textLabel.text = service.name;
-    cell.detailTextLabel.text = service.price;
-    return cell;
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    [self.carNumberTextField.textField resignFirstResponder];
+    [self.orderTable reloadData];
     if (self.carNumberTextField.textField.text.length != 0) {
-        ServiceModel *service = (ServiceModel *)[self.dataArray objectAtIndex:indexPath.row];
+        ServiceModel *service = (ServiceModel *)[self.dataArray objectAtIndex:path.row];
         service_id = [NSString stringWithFormat:@"%@",service.serviceId];
         if (service_id) {
             if ([[Utils isExistenceNetwork] isEqualToString:@"NotReachable"]) {
@@ -1003,6 +1018,54 @@ static NSString *service_id = nil;
         [Utils errorAlert:@"请输入车牌号码!"];
     }
 }
+#pragma mark --
+
+
+#pragma mark -- tableView
+static NSString *service_id = nil;
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return self.dataArray.count;
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    ServeItemView *cell = (ServeItemView*)[tableView dequeueReusableCellWithIdentifier:@"cell"];
+    ServiceModel *service = (ServiceModel *)[self.dataArray objectAtIndex:indexPath.row];
+    [cell.serveBt setTitle:service.name forState:UIControlStateNormal];
+    cell.path = indexPath;
+    cell.backgroundColor = [UIColor clearColor];
+    cell.isSelected = service.isSelected;
+    cell.delegate = self;
+    return cell;
+}
+
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return 100;
+}
+
+//- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+//    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+//    [self.carNumberTextField.textField resignFirstResponder];
+//    if (self.carNumberTextField.textField.text.length != 0) {
+//        ServiceModel *service = (ServiceModel *)[self.dataArray objectAtIndex:indexPath.row];
+//        service_id = [NSString stringWithFormat:@"%@",service.serviceId];
+//        if (service_id) {
+//            if ([[Utils isExistenceNetwork] isEqualToString:@"NotReachable"]) {
+//                [Utils errorAlert:@"暂无网络!"];
+//            }else {
+//                [self isCarNum];
+//                if (self.is_car_num) {
+//                    MBProgressHUD *hud = [[MBProgressHUD alloc] initWithView:self.view];
+//                    hud.dimBackground = NO;
+//                    [hud showWhileExecuting:@selector(getServiceCar) onTarget:self withObject:nil animated:YES];
+//                    hud.labelText = @"正在玩命加载...";
+//                    [self.view addSubview:hud];
+//                }
+//            }
+//        }
+//    }else {
+//        [Utils errorAlert:@"请输入车牌号码!"];
+//    }
+//}
+
 //判断输入的内容：车牌？电话号码？
 -(void)isCarNum {
     NSString *regexCall = @"1[0-9]{10}";

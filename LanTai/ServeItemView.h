@@ -7,6 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
+@protocol ServeItemViewDelegate;
+@interface ServeItemView : UITableViewCell
+@property (weak, nonatomic) IBOutlet UIButton *serveBt;
+@property (nonatomic,strong) NSIndexPath *path;
+@property (nonatomic,assign) BOOL isSelected;
+@property (nonatomic,weak) id<ServeItemViewDelegate> delegate;
+@end
 
-@interface ServeItemView : UIView
+@protocol ServeItemViewDelegate <NSObject>
+
+-(void)serveItemView:(ServeItemView*)itemView didSelectedItemAtIndexPath:(NSIndexPath*)path;
+
 @end

@@ -11,17 +11,19 @@
 #import "PayViewController.h"
 #import "BZGFormField.h"
 #import "CarCellView.h"
+#import "ServeItemView.h"
 @class ShaixuanView;
 @class PlateVViewController;
 @protocol BZGFormFieldDelegate;
 
-@interface LanTaiMenuMainController : UIViewController<UIScrollViewDelegate,UITextFieldDelegate,UITableViewDataSource,UITableViewDelegate,BZGFormFieldDelegate,CarCellViewDelegate>
+@interface LanTaiMenuMainController : UIViewController<UIScrollViewDelegate,UITextFieldDelegate,UITableViewDataSource,UITableViewDelegate,BZGFormFieldDelegate,CarCellViewDelegate,ServeItemViewDelegate>
 @property (weak, nonatomic) IBOutlet UIScrollView *leftTopScrollView;
 @property (weak, nonatomic) IBOutlet UIScrollView *bottomLeftScrollView;
 
 @property (weak, nonatomic) IBOutlet UIView *leftBackgroundView;
 @property (weak, nonatomic) IBOutlet UIView *touchView;
 @property (weak, nonatomic) IBOutlet BZGFormField *carNumberTextField;
+@property (weak, nonatomic) IBOutlet UIView *leftMiddlebgView;
 
 
 @property (nonatomic,strong) IBOutlet UITableView *orderTable;
@@ -37,6 +39,7 @@
 
 //菊花
 @property (nonatomic,strong) MBProgressHUD *hud;
+@property (weak, nonatomic) IBOutlet UIButton *serveRefreshBt;
 
 - (IBAction)refreshServeItemsBtClicked:(id)sender;
 - (IBAction)touchDragGesture:(UIPanGestureRecognizer *)sender;
