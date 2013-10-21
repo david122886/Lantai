@@ -481,9 +481,9 @@
     [self.topVerticalLabel setInset:UIEdgeInsetsMake(10, 0, 10, 0)];
     [self.middleVerticalLabel setInset:UIEdgeInsetsMake(10, 0, 10, 0)];
     [self.bottomVerticalLabel setInset:UIEdgeInsetsMake(10, 0, 10, 0)];
-    [self.topVerticalLabel setText:@"等待服务" withTextColor:[UIColor redColor]];
+    [self.topVerticalLabel setText:@"等待服务" withTextColor:[UIColor colorWithRed:237/255.0 green:85/255.0 blue:101/255.0 alpha:1]];
     [self.middleVerticalLabel setText:@"服务中" withTextColor:[UIColor colorWithRed:72/255.0 green:207/255.0 blue:173/255.0 alpha:1]];
-    [self.bottomVerticalLabel setText:@"等待付款" withTextColor:[UIColor blueColor]];
+    [self.bottomVerticalLabel setText:@"等待付款" withTextColor:[UIColor colorWithRed:93/255.0 green:156/255.0 blue:236/255.0 alpha:1]];
     //退出登录
     self.navigationItem.rightBarButtonItems = nil;
     [self addRightnaviItemsWithImage:@"back"];
@@ -1307,13 +1307,14 @@ static NSString *service_id = nil;
             if ([str isEqualToString:txtField.text] || ([[str lowercaseString] isEqualToString:txtField.text])) {
                 NSArray *array = [[DataService sharedService].sectionArray objectAtIndex:i];
                 if (array.count>0 && self.sxView == nil) {
+                    CGRect rect = [self.rightBackgroundView convertRect:self.carNumberTextField.frame toView:self.view];
                     self.sxView = [[ShaixuanView alloc]initWithNibName:@"ShaixuanView" bundle:nil];
-                    self.sxView.view.frame = CGRectMake(810, 145, 0, 0);
+                    self.sxView.view.frame = (CGRect){CGRectGetMinX(rect),CGRectGetMaxY(rect)};
                     self.sxView.dataArray = array;
                     [UIView beginAnimations:nil context:nil];
                     [UIView setAnimationDuration:0.35];
                     [UIView setAnimationCurve:UIViewAnimationCurveEaseOut];
-                    self.sxView.view.frame = CGRectMake(810, 145, 200, 110);
+                    self.sxView.view.frame = (CGRect){CGRectGetMinX(rect),CGRectGetMaxY(rect),CGRectGetWidth(rect),110};
                     [self.view addSubview:self.sxView.view];
                     [UIView commitAnimations];
                     

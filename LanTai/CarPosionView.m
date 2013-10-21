@@ -96,8 +96,8 @@
     [super layoutSubviews];
     self.titileBackView.frame = (CGRect){0,0,self.frame.size.width,CAR_TITLE_HEIGHT+CAR_PADDING*2};
     self.posinIDLabel.frame = (CGRect){CAR_PADDING,CAR_PADDING,(CGRectGetWidth(self.frame)-CAR_PADDING*3)*2/3,CAR_TITLE_HEIGHT};
-    self.posionDateImageView.frame = (CGRect){CGRectGetMaxX(self.posinIDLabel.frame)+CAR_PADDING,CGRectGetHeight(self.titileBackView.frame)/2 - CAR_DATE_IMAGEWIDTH/2,CAR_DATE_IMAGEWIDTH,CAR_DATE_IMAGEWIDTH};
-    self.posinDateLabel.frame = (CGRect){CAR_PADDING/2+CGRectGetMaxX(self.posionDateImageView.frame),CAR_PADDING,(CGRectGetWidth(self.frame)-CAR_PADDING*3)/3-CAR_DATE_IMAGEWIDTH,CAR_TITLE_HEIGHT};
+    self.posionDateImageView.frame = (CGRect){CGRectGetMaxX(self.posinIDLabel.frame),CGRectGetHeight(self.titileBackView.frame)/2 - CAR_DATE_IMAGEWIDTH/2,CAR_DATE_IMAGEWIDTH,CAR_DATE_IMAGEWIDTH};
+    self.posinDateLabel.frame = (CGRect){CAR_PADDING/2+CGRectGetMaxX(self.posionDateImageView.frame),CAR_PADDING,(CGRectGetWidth(self.frame))/3-CAR_DATE_IMAGEWIDTH,CAR_TITLE_HEIGHT};
     self.serveNameLabel.frame = (CGRect){CAR_PADDING,CGRectGetMaxY(self.titileBackView.frame),self.frame.size.width - CAR_PADDING*2,CAR_TITLE_HEIGHT};
     
     float carHeight = CGRectGetHeight(self.frame) - CGRectGetHeight(self.titileBackView.frame) - CAR_CARPADDING*4/3;

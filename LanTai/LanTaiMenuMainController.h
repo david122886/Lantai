@@ -25,6 +25,7 @@
 @property (weak, nonatomic) IBOutlet UIView *touchView;
 @property (weak, nonatomic) IBOutlet BZGFormField *carNumberTextField;
 @property (weak, nonatomic) IBOutlet UIView *leftMiddlebgView;
+@property (weak, nonatomic) IBOutlet UIView *rightBackgroundView;
 
 
 @property (nonatomic,strong) IBOutlet UITableView *orderTable;

@@ -109,6 +109,7 @@
 		637EE7A41811072D00C8CE6F /* serveGraybg.png in Resources */ = {isa = PBXBuildFile; fileRef = 637EE7A21811072D00C8CE6F /* serveGraybg.png */; };
 		637EE7A51811072D00C8CE6F /* serveRedbg.png in Resources */ = {isa = PBXBuildFile; fileRef = 637EE7A31811072D00C8CE6F /* serveRedbg.png */; };
 		637EE7A818112A2D00C8CE6F /* DRVerticalLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 637EE7A718112A2D00C8CE6F /* DRVerticalLabel.m */; };
+		637FD35D1814C96300E8EFFF /* navibg1.png in Resources */ = {isa = PBXBuildFile; fileRef = 637FD35C1814C96300E8EFFF /* navibg1.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -257,6 +258,7 @@
 		637EE7A31811072D00C8CE6F /* serveRedbg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = serveRedbg.png; sourceTree = "<group>"; };
 		637EE7A618112A2D00C8CE6F /* DRVerticalLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DRVerticalLabel.h; sourceTree = "<group>"; };
 		637EE7A718112A2D00C8CE6F /* DRVerticalLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DRVerticalLabel.m; sourceTree = "<group>"; };
+		637FD35C1814C96300E8EFFF /* navibg1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = navibg1.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -368,6 +370,7 @@
 		0EA2E044180E777000B4FE02 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				637FD35C1814C96300E8EFFF /* navibg1.png */,
 				0EFBFDA11811184D00569A83 /* view_bg.png */,
 				637EE79E1810F36A00C8CE6F /* posinTitlegraybg.png */,
 				637EE79F1810F36A00C8CE6F /* posionTitlegreenbg.png */,
@@ -605,6 +608,7 @@
 				0EA2E050180E77D300B4FE02 /* alert_bg.png in Resources */,
 				0EA2E049180E77AD00B4FE02 /* cb_mono_off.png in Resources */,
 				0E9CCBCF180D343800BA469B /* custom-dialog-background.png in Resources */,
+				637FD35D1814C96300E8EFFF /* navibg1.png in Resources */,
 				0E9CCC1D180D41E900BA469B /* PayStyleViewController.xib in Resources */,
 				0EA2E039180E338400B4FE02 /* PlateVViewController.xib in Resources */,
 				0EA2E07E180EA2B600B4FE02 /* blueCar.png in Resources */,
