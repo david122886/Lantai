@@ -109,7 +109,7 @@
             
             [DataService sharedService].user_id = [NSString stringWithFormat:@"%@",[staff objectForKey:@"id"]];
             [DataService sharedService].store_id = [NSString stringWithFormat:@"%@",[staff objectForKey:@"store_id"]];
-            
+            [DataService sharedService].firstTime = YES;
             [(AppDelegate *)[UIApplication sharedApplication].delegate showRootView];
         }else{
             [Utils errorAlert:text];
@@ -130,7 +130,7 @@
             MBProgressHUD *hud = [[MBProgressHUD alloc] initWithView:self.view];
             hud.dimBackground = NO;
             [hud showWhileExecuting:@selector(login) onTarget:self withObject:nil animated:YES];
-            hud.labelText = @"正在努力加载...";
+            hud.labelText = @"正在玩命加载...";
             [self.view addSubview:hud];
         }
     }

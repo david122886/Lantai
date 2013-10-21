@@ -554,7 +554,6 @@
                         [self.waittingCarsArr addObject:order];
                     }
                     [dic setObject:self.waittingCarsArr forKey:@"wait"];
-                    //                    [self setWaittingScrollViewContext];
                 }
             }
             //施工中
@@ -568,7 +567,6 @@
                         [self.beginningCarsDic setObject:order forKey:order.stationId];
                     }
                     [dic setObject:self.beginningCarsDic forKey:@"work"];
-                    //                    [self moveCarIntoCarPosion];
                 }
             }
             //等待付款
@@ -583,7 +581,6 @@
                         [self.finishedCarsArr addObject:order];
                     }
                     [dic setObject:self.finishedCarsArr forKey:@"finish"];
-                    //                    [self setFinishedScrollViewContext];
                 }
             }
             

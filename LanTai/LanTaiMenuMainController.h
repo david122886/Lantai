@@ -32,7 +32,7 @@
 @property (nonatomic,strong) NSMutableArray *letterArray;
 @property (nonatomic,strong) NSString *is_car_num;//0:电话  1:车牌
 @property (nonatomic,strong) PlateVViewController *plateView;
-
+@property (nonatomic,strong) NSTimer *timer;
 
 //菊花
 @property (nonatomic,strong) MBProgressHUD *hud;
