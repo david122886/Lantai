@@ -7,7 +7,6 @@
 //
 #import "AppDelegate.h"
 #import "LanTaiMenuMainController.h"
-
 #import "CarObj.h"
 #import "ServeItemView.h"
 #import "ShaixuanView.h"
@@ -15,6 +14,7 @@
 #import "PayViewController.h"
 #import "ServiceModel.h"
 #import "CarPosionView.h"
+#import "StationModel.h"
 
 #define CELL_WIDHT  250
 #define CELL_POSION_WIDHT  250
@@ -43,22 +43,6 @@
     }
     return self;
 }
--(void)getData{
-    NSMutableDictionary *params=[[NSMutableDictionary alloc] init];
-    [params setObject:[DataService sharedService].store_id forKey:@"store_id"];
-    NSMutableURLRequest *request=[Utils getRequest:params string:[NSString stringWithFormat:@"%@%@",kHost,kService]];
-    NSOperationQueue *queue=[[NSOperationQueue alloc] init];
-    [NSURLConnection sendAsynchronousRequest:request queue:queue completionHandler:^(NSURLResponse *respone,
-                                                                                     NSData *data,
-                                                                                     NSError *error)
-     {
-         if ([data length]>0 && error==nil) {
-             [self performSelectorOnMainThread:@selector(setRespondtext:) withObject:data waitUntilDone:NO];
-             
-         }
-     }
-     ];
-}
 -(CarObj *)setAttributeWithDictionary:(NSDictionary *)result {
     CarObj *order = [[CarObj alloc]init];
     order.carID = [NSString stringWithFormat:@"%@",[result objectForKey:@"car_num_id"]];
@@ -78,6 +62,23 @@
     }
     return order;
 }
+-(void)getData{
+    NSMutableDictionary *params=[[NSMutableDictionary alloc] init];
+    [params setObject:[DataService sharedService].store_id forKey:@"store_id"];
+    NSMutableURLRequest *request=[Utils getRequest:params string:[NSString stringWithFormat:@"%@%@",kHost,kService]];
+    NSOperationQueue *queue=[[NSOperationQueue alloc] init];
+    [NSURLConnection sendAsynchronousRequest:request queue:queue completionHandler:^(NSURLResponse *respone,
+                                                                                     NSData *data,
+                                                                                     NSError *error)
+     {
+         if ([data length]>0 && error==nil) {
+             [self performSelectorOnMainThread:@selector(setRespondtext:) withObject:data waitUntilDone:NO];
+             
+         }
+     }
+     ];
+}
+
 -(void)setRespondtext:(NSData *)data {
     id jsonObject=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
     if (jsonObject !=nil) {
@@ -88,8 +89,15 @@
                 //工位数组
                 NSArray *station_array = [jsonData objectForKey:@"station_ids"];
                 if (station_array.count>0) {
-                    self.stationArray = [NSMutableArray arrayWithArray:station_array];
-                    [self setBegningScrollViewContextWithPosionCount:station_array];
+                    self.stationArray = [[NSMutableArray alloc]init];
+                    for (int k=0; k<station_array.count; k++) {
+                        NSDictionary *s_dic = [station_array objectAtIndex:k];
+                        StationModel *stationM = [[StationModel alloc]init];
+                        stationM.StationID = [s_dic objectForKey:@"id"];
+                        stationM.name = [s_dic objectForKey:@"name"];
+                        [self.stationArray addObject:stationM];
+                    }
+                    [self setBegningScrollViewContextWithPosionCount:self.stationArray];
                 }
                 //服务
                 NSArray *result_array = [NSArray arrayWithArray:[jsonData objectForKey:@"services"]];
@@ -173,11 +181,11 @@
 }
 -(void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    self.timer = [NSTimer scheduledTimerWithTimeInterval:300 target:self selector:@selector(refreshData:) userInfo:nil repeats:YES];
+//    self.timer = [NSTimer scheduledTimerWithTimeInterval:300 target:self selector:@selector(refreshData:) userInfo:nil repeats:YES];
 }
 -(void)refreshData:(id)sender {
     if ([[Utils isExistenceNetwork] isEqualToString:@"NotReachable"]) {
-        
+        [Utils errorAlert:@"暂无网络!"];
     }else {
         [self getData];
     }
@@ -216,7 +224,8 @@
 -(void)moveCarIntoCarPosion{
     for (int index = 0; index < [self.posionItemArr count]; index++) {
         CarPosionView *posion = [self.posionItemArr objectAtIndex:index];
-        CarObj *obj = [self.beginningCarsDic objectForKey:[NSString stringWithFormat:@"%@",[self.stationArray objectAtIndex:index]]];
+        StationModel *ss = (StationModel *)[self.stationArray objectAtIndex:index];
+        CarObj *obj = [self.beginningCarsDic objectForKey:[NSString stringWithFormat:@"%@",ss.StationID]];
         
         [posion setCarObj:obj];
     }
@@ -249,8 +258,10 @@
     for (int index = 0; index < ccount; index++) {
         CarPosionView *view = [[CarPosionView alloc] init];
         view.tag = -1;
-        view.posionID = [[array objectAtIndex:index]intValue];
+        StationModel *ss = (StationModel *)[array objectAtIndex:index];
+        view.posionID = [ss.StationID intValue];
         view.isEmpty = YES;
+        view.posinName = ss.name;
         view.frame = [self getBeginningScrollViewItemRectWithIndex:index];
         view.backgroundColor = [UIColor whiteColor];
         view.layer.shadowColor = [UIColor darkGrayColor].CGColor;
@@ -349,15 +360,30 @@
     [self.beginningCarsDic setValue:fromObj forKey:[NSString stringWithFormat:@"%d",from]];
     [self.beginningCarsDic setValue:toObj forKey:[NSString stringWithFormat:@"%d",to]];
     
-    CarPosionView *posion1 = [self.posionItemArr objectAtIndex:[self.stationArray indexOfObject:[NSString stringWithFormat:@"%d",from]]];
-    CarPosionView *posion2 = [self.posionItemArr objectAtIndex:[self.stationArray indexOfObject:[NSString stringWithFormat:@"%d",to]]];
-    [posion1 setCarObj:fromObj];
-    [posion2 setCarObj:toObj];////////////////david is good is not good
+    for (StationModel *ss in self.stationArray) {
+        if ([ss.StationID intValue] == from) {
+            CarPosionView *posion1 = [self.posionItemArr objectAtIndex:[self.stationArray indexOfObject:ss]];
+            [posion1 setCarObj:fromObj];
+        }
+    }
+    
+    for (StationModel *ss in self.stationArray) {
+        if ([ss.StationID intValue] == to) {
+            CarPosionView *posion2 = [self.posionItemArr objectAtIndex:[self.stationArray indexOfObject:ss]];
+            [posion2 setCarObj:toObj];
+        }
+    }
 }
 
 -(void)failureMoveCarCellFromBeginningScrollViewToBottomLeftScrollViewCellPosionFromIndex:(int)from toIndex:(int)to orCarObj:(CarObj*)fromObj{
-    CarPosionView *posion1 = [self.posionItemArr objectAtIndex:[self.stationArray indexOfObject:[NSString stringWithFormat:@"%d",from]]];
-    [posion1 setCarObj:fromObj];
+    for (StationModel *ss in self.stationArray) {
+        if ([ss.StationID intValue] == from) {
+            CarPosionView *posion1 = [self.posionItemArr objectAtIndex:[self.stationArray indexOfObject:ss]];
+            [posion1 setCarObj:fromObj];
+        }
+    }
+//    CarPosionView *posion1 = [self.posionItemArr objectAtIndex:[self.stationArray indexOfObject:[NSString stringWithFormat:@"%d",from]]];
+//    [posion1 setCarObj:fromObj];
     [self.beginningCarsDic setValue:fromObj forKey:[NSString stringWithFormat:@"%d",from]];
     [UIView animateWithDuration:0.5 animations:^{
         for (UIView *subView in [self.bottomLeftScrollView subviews]) {
@@ -1003,11 +1029,11 @@ static NSMutableDictionary *finish_dic = nil;
             }else {
                 [self isCarNum];
                 if (self.is_car_num) {
-//                    MBProgressHUD *hud = [[MBProgressHUD alloc] initWithView:self.view];
-//                    hud.dimBackground = NO;
-//                    [hud showWhileExecuting:@selector(getServiceCar) onTarget:self withObject:nil animated:YES];
-//                    hud.labelText = @"正在玩命加载...";
-//                    [self.view addSubview:hud];
+                    MBProgressHUD *hud = [[MBProgressHUD alloc] initWithView:self.view];
+                    hud.dimBackground = NO;
+                    [hud showWhileExecuting:@selector(getServiceCar) onTarget:self withObject:nil animated:YES];
+                    hud.labelText = @"正在玩命加载...";
+                    [self.view addSubview:hud];
                 }
             }
         }

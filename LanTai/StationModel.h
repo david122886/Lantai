@@ -9,5 +9,6 @@
 #import <Foundation/Foundation.h>
 
 @interface StationModel : NSObject
-
+@property (nonatomic, strong) NSString *StationID;
+@property (nonatomic, strong) NSString *name;
 @end

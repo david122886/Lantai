@@ -11,6 +11,7 @@
 #import "CarCellView.h"
 @interface CarPosionView : UIView
 @property(nonatomic,assign) int posionID;
+@property(nonatomic,strong) NSString *posinName;
 @property(nonatomic,strong) NSString *posionDate;
 @property(nonatomic,strong) NSString *posionCarNumber;
 @property(nonatomic,strong) NSString *posionServeName;

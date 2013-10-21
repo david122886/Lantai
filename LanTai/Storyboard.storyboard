@@ -8,7 +8,7 @@
         <!--Init View Controller-->
         <scene sceneID="Arw-TF-nTK">
             <objects>
-                <viewController id="7DJ-NK-eL9" customClass="InitViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="InitViewController" id="7DJ-NK-eL9" customClass="InitViewController" sceneMemberID="viewController">
                     <view key="view" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="J5N-KG-6OK">
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -46,10 +46,14 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
+                    <connections>
+                        <outlet property="activityView" destination="XmB-cy-3iM" id="ASm-De-dv0"/>
+                        <outlet property="view2" destination="OYf-yL-lfn" id="WcY-Kn-rRl"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SIi-6w-pmu" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1964" y="-190"/>
+            <point key="canvasLocation" x="-1907" y="-170"/>
         </scene>
         <!--Lan Tai Menu Main Controller-->
         <scene sceneID="hHk-l9-YpE">

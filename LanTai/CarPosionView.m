@@ -134,11 +134,15 @@
     [self.carImageView setHidden:!isEmpty];
 }
 
--(void)setPosionID:(int)posionID{
-    _posionID = posionID;
-    self.posinIDLabel.text = [NSString stringWithFormat:@"%d工号位",_posionID];
-}
+//-(void)setPosionID:(int)posionID{
+//    _posionID = posionID;
+//    self.posinIDLabel.text = [NSString stringWithFormat:@"%d工号位",_posionID];
+//}
 
+-(void)setPosinName:(NSString *)posinName{
+    _posinName = posinName;
+    self.posinIDLabel.text = posinName;
+}
 
 -(void)setCarObj:(CarObj*)car{
     if (car) {
