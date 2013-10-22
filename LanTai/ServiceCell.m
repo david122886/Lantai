@@ -50,7 +50,7 @@ static float p_price = 0;
             }
             p_price = [self.txtPrice.text floatValue];
         }else {
-            self.total.hidden = NO;
+            self.total.hidden = YES;
             self.txtPrice.hidden = YES;
             self.lblCount.frame = CGRectMake(420, 11, 55, 21);
             self.total.frame  =CGRectMake(482, 9, 80, 26);

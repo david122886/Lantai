@@ -162,31 +162,11 @@
     if (![self.navigationItem rightBarButtonItem]) {
         [self addRightnaviItemsWithImage:@"back"];
     }
+    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"view_bg"]];
     self.orderBgView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"confirm_bg"]];
-    
-    //    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hideKeyBord)];
-    //    [self.view addGestureRecognizer:tap];
+
 }
--(void)hideKeyBord {
-    NSArray *subViews = [self.productTable subviews];
-    if (subViews.count >0) {
-        for (UIView *v in subViews) {
-            if ([v isKindOfClass:[UITableViewCell class]]) {
-                UITableViewCell *cell = (UITableViewCell *)v;
-                NSArray *subView = [cell.contentView subviews];
-                if (subView.count>0) {
-                    for (UIView *vv in subView) {
-                        if ([vv isKindOfClass:[UITextField class]]) {
-                            UITextField *txt = (UITextField *)vv;
-                            [txt resignFirstResponder];
-                        }
-                    }
-                }
-                
-            }
-        }
-    }
-}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -247,10 +227,6 @@
         }
         cell.lblName.text = [product objectForKey:@"name"];
         cell.lblPrice.text = [NSString stringWithFormat:@"%@",[product objectForKey:@"price"]];
-        if ([product objectForKey:@"count"]) {
-            cell.lblCount.text = [NSString stringWithFormat:@"%@",[product objectForKey:@"count"]];
-            cell.stepBtn.value = [[product objectForKey:@"count"] doubleValue];
-        }
         
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         return cell;
@@ -582,7 +558,6 @@
             }
             //等待付款
             if (![[order_dic objectForKey:@"2"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"2"]!= nil) {
-                
                 NSArray *finish_array = [order_dic objectForKey:@"2"];
                 if (finish_array.count>0) {
                     self.finishedCarsArr = [[NSMutableArray alloc]init];
