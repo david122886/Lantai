@@ -107,6 +107,7 @@
         payStyleView = nil;
         payStyleView = [[PayStyleViewController alloc] initWithNibName:@"PayStyleViewController" bundle:nil];
         payStyleView.delegate = self;
+        
         NSMutableDictionary *dic = [NSMutableDictionary dictionary];
         if (![[orderInfo objectForKey:@"order_id"] isKindOfClass:[NSNull class]] && [orderInfo objectForKey:@"order_id"]!= nil) {
             [dic setObject:[orderInfo objectForKey:@"order_id"] forKey:@"order_id"];
@@ -114,6 +115,8 @@
             [dic setObject:self.lblCarNum.text forKey:@"carNum"];
             [dic setObject:[orderInfo objectForKey:@"order_code"] forKey:@"code"];
         }
+        self.payString = [self checkForm];
+        [dic setObject:self.payString forKey:@"prods"];
         [dic setObject:[orderInfo objectForKey:@"order_code"] forKey:@"code"];
         [dic setObject:[NSNumber numberWithInt:0] forKey:@"is_please"];
         [dic setObject:[NSString stringWithFormat:@"%.2f",self.total_count] forKey:@"price"];
@@ -529,7 +532,7 @@
 #pragma mark -取消订单（排队等待中）
 -(void)cancleOrderr {
     STHTTPRequest *r = [STHTTPRequest requestWithURLString:[NSString stringWithFormat:@"%@%@",kHost,kPayOrder]];
-    [r setPOSTDictionary:[NSDictionary dictionaryWithObjectsAndKeys:[orderInfo objectForKey:@"order_id"],@"order_id",@"1",@"opt_type", nil]];
+    [r setPOSTDictionary:[NSDictionary dictionaryWithObjectsAndKeys:[orderInfo objectForKey:@"order_id"],@"order_id",@"1",@"opt_type",[DataService sharedService].store_id,@"store_id", nil]];
     [r setPostDataEncoding:NSUTF8StringEncoding];
     NSError *error = nil;
     NSDictionary *result = [[r startSynchronousWithError:&error] objectFromJSONString];
@@ -554,7 +557,6 @@
                         [self.waittingCarsArr addObject:order];
                     }
                     [dic setObject:self.waittingCarsArr forKey:@"wait"];
-                    //                    [self setWaittingScrollViewContext];
                 }
             }
             //施工中
@@ -568,7 +570,6 @@
                         [self.beginningCarsDic setObject:order forKey:order.stationId];
                     }
                     [dic setObject:self.beginningCarsDic forKey:@"work"];
-                    //                    [self moveCarIntoCarPosion];
                 }
             }
             //等待付款
@@ -583,7 +584,6 @@
                         [self.finishedCarsArr addObject:order];
                     }
                     [dic setObject:self.finishedCarsArr forKey:@"finish"];
-                    //                    [self setFinishedScrollViewContext];
                 }
             }
             

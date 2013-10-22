@@ -13,6 +13,7 @@
 #import "CarCellView.h"
 #import "ServeItemView.h"
 #import "DRVerticalLabel.h"
+
 @class ShaixuanView;
 @class PlateVViewController;
 @protocol BZGFormFieldDelegate;
@@ -34,10 +35,10 @@
 @property (nonatomic,strong) NSMutableArray *letterArray;
 @property (nonatomic,strong) NSString *is_car_num;//0:电话  1:车牌
 @property (nonatomic,strong) PlateVViewController *plateView;
+@property (nonatomic,strong) NSTimer *timer;
 @property (weak, nonatomic) IBOutlet DRVerticalLabel *topVerticalLabel;
 @property (weak, nonatomic) IBOutlet DRVerticalLabel *middleVerticalLabel;
 @property (weak, nonatomic) IBOutlet DRVerticalLabel *bottomVerticalLabel;
-
 
 //菊花
 @property (nonatomic,strong) MBProgressHUD *hud;

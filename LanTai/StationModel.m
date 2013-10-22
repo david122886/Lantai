@@ -1,14 +1,14 @@
 //
-//  OrderModel.m
+//  StationModel.m
 //  LanTai
 //
-//  Created by comdosoft on 13-10-16.
+//  Created by comdosoft on 13-10-21.
 //  Copyright (c) 2013年 david. All rights reserved.
 //
 
-#import "OrderModel.h"
+#import "StationModel.h"
 
-@implementation OrderModel
+@implementation StationModel
 
 -(id)init {
     self = [super init];
@@ -17,5 +17,4 @@
     }
     return self;
 }
-
 @end

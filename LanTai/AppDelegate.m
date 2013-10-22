@@ -10,7 +10,7 @@
 #import "LanTaiMenuMainController.h"
 #import "LoginViewController.h"
 #import "pinyin.h"
-
+#import "InitViewController.h"
 @implementation AppDelegate
 + (AppDelegate *)shareInstance {
     return (AppDelegate *)([UIApplication sharedApplication].delegate);
@@ -51,7 +51,6 @@
         [DataService sharedService].sectionArray=[Utils matchArray];
     }
 }
-
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
