@@ -10,7 +10,6 @@
 @protocol ServeItemViewDelegate;
 @interface ServeItemView : UITableViewCell
 @property (weak, nonatomic) IBOutlet UIButton *serveBt;
-@property (weak, nonatomic) IBOutlet UILabel *price_lab;
 @property (nonatomic,strong) NSIndexPath *path;
 @property (nonatomic,assign) BOOL isSelected;
 @property (nonatomic,weak) id<ServeItemViewDelegate> delegate;

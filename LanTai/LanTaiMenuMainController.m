@@ -1067,7 +1067,6 @@ static NSString *service_id = nil;
     ServeItemView *cell = (ServeItemView*)[tableView dequeueReusableCellWithIdentifier:@"cell"];
     ServiceModel *service = (ServiceModel *)[self.dataArray objectAtIndex:indexPath.row];
     [cell.serveBt setTitle:service.name forState:UIControlStateNormal];
-    cell.price_lab.text = [NSString stringWithFormat:@"%@",service.price];
     cell.path = indexPath;
     cell.backgroundColor = [UIColor clearColor];
     cell.isSelected = service.isSelected;
