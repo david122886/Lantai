@@ -155,7 +155,6 @@
 
 -(NSString*)getTimeStrFromDateStr:(NSString*)dateStr{
     if (dateStr) {
-        dateStr = @"2012-12-45 12:1:1";
         NSArray *date = [dateStr componentsSeparatedByString:@" "];
         if ([date count] > 1) {
             NSArray *timeArr = [[date objectAtIndex:1] componentsSeparatedByString:@":"];
