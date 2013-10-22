@@ -92,7 +92,6 @@
 }
 */
 
-
 -(void)setIsEmpty:(BOOL)isEmpty{
     _isEmpty = isEmpty;
     if (isEmpty) {

@@ -31,7 +31,7 @@
         self.navigationView = [[UINavigationController alloc] initWithRootViewController:messageView];
         //设置导航条背景
         if ([self.navigationView.navigationBar respondsToSelector:@selector(setBackgroundImage:forBarMetrics:)]) {
-            [self.navigationView.navigationBar setBackgroundImage:[UIImage imageNamed:@"nav_bg"] forBarMetrics:UIBarMetricsDefault];
+            [self.navigationView.navigationBar setBackgroundImage:[UIImage imageNamed:@"navibg1.png"] forBarMetrics:UIBarMetricsDefault];
         }
         [self performSelectorOnMainThread:@selector(showView) withObject:nil waitUntilDone:NO];
         

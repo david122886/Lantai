@@ -58,7 +58,7 @@
         <!--Lan Tai Menu Main Controller-->
         <scene sceneID="hHk-l9-YpE">
             <objects>
-                <viewController storyboardIdentifier="LanTaiMenuMainController" id="bG0-JO-yZG" customClass="LanTaiMenuMainController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="LanTaiMenuMainController" extendedLayoutIncludesOpaqueBars="YES" id="bG0-JO-yZG" customClass="LanTaiMenuMainController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="gDN-pa-CyQ">
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -215,6 +215,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     </view>
+                    <extendedEdge key="edgesForExtendedLayout" top="YES"/>
                     <navigationItem key="navigationItem" id="fck-Q5-JOg"/>
                     <nil key="simulatedStatusBarMetrics"/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
@@ -228,6 +229,7 @@
                         <outlet property="leftTopScrollView" destination="B6s-ys-3uy" id="1UO-2G-2da"/>
                         <outlet property="middleVerticalLabel" destination="0cj-Ds-ocE" id="bIY-58-X6x"/>
                         <outlet property="orderTable" destination="Lgw-xB-Fpn" id="yiD-WX-ZKq"/>
+                        <outlet property="rightBackgroundView" destination="7ki-ct-ohR" id="mgT-d3-wzY"/>
                         <outlet property="serveRefreshBt" destination="Ib1-P2-6cu" id="Qhb-MS-KiP"/>
                         <outlet property="topVerticalLabel" destination="rB9-NW-G3j" id="Ml4-Wu-k3U"/>
                     </connections>
