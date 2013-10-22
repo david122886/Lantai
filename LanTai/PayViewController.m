@@ -574,7 +574,6 @@
             }
             //等待付款
             if (![[order_dic objectForKey:@"2"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"2"]!= nil) {
-                
                 NSArray *finish_array = [order_dic objectForKey:@"2"];
                 if (finish_array.count>0) {
                     self.finishedCarsArr = [[NSMutableArray alloc]init];
