@@ -45,6 +45,7 @@
 		0E9CCC1D180D41E900BA469B /* PayStyleViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0E9CCC1B180D41E900BA469B /* PayStyleViewController.xib */; };
 		0E9CCC20180D4D9D00BA469B /* ServiceModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E9CCC1F180D4D9D00BA469B /* ServiceModel.m */; };
 		0E9CCC23180D589800BA469B /* BZGFormField.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E9CCC22180D589800BA469B /* BZGFormField.m */; };
+		0EA0FBAC18160E72001A01A6 /* DRVerticalLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 637EE7A718112A2D00C8CE6F /* DRVerticalLabel.m */; };
 		0EA2E038180E338400B4FE02 /* PlateVViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0EA2E036180E338400B4FE02 /* PlateVViewController.m */; };
 		0EA2E039180E338400B4FE02 /* PlateVViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0EA2E037180E338400B4FE02 /* PlateVViewController.xib */; };
 		0EA2E040180E4E9800B4FE02 /* InitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0EA2E03B180E4E9800B4FE02 /* InitViewController.m */; };
@@ -103,7 +104,6 @@
 		637EE7A11810F36A00C8CE6F /* posionTitlegreenbg.png in Resources */ = {isa = PBXBuildFile; fileRef = 637EE79F1810F36A00C8CE6F /* posionTitlegreenbg.png */; };
 		637EE7A41811072D00C8CE6F /* serveGraybg.png in Resources */ = {isa = PBXBuildFile; fileRef = 637EE7A21811072D00C8CE6F /* serveGraybg.png */; };
 		637EE7A51811072D00C8CE6F /* serveRedbg.png in Resources */ = {isa = PBXBuildFile; fileRef = 637EE7A31811072D00C8CE6F /* serveRedbg.png */; };
-		637EE7A818112A2D00C8CE6F /* DRVerticalLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 637EE7A718112A2D00C8CE6F /* DRVerticalLabel.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -639,6 +639,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0EA0FBAC18160E72001A01A6 /* DRVerticalLabel.m in Sources */,
 				63268F8B180CDC8B006E06E3 /* main.m in Sources */,
 				0E9CCBFE180D355C00BA469B /* pinyin.c in Sources */,
 				63268F8F180CDC8B006E06E3 /* AppDelegate.m in Sources */,
@@ -663,11 +664,6 @@
 				0EA2E063180E811A00B4FE02 /* UITextView+Border.m in Sources */,
 				0EA2E040180E4E9800B4FE02 /* InitViewController.m in Sources */,
 				0E9CCBF0180D34A000BA469B /* Utils.m in Sources */,
-<<<<<<< HEAD
-=======
-				63268FD7180D142C006E06E3 /* LanTaiMainLayout.m in Sources */,
-				637EE7A818112A2D00C8CE6F /* DRVerticalLabel.m in Sources */,
->>>>>>> 711b945ceadda99b8c5fbbe4686a3c3c2bf0db06
 				0E9CCBD1180D343800BA469B /* AHAlertView.m in Sources */,
 				0E9CCC18180D416D00BA469B /* ProductHeader.m in Sources */,
 				0E9CCBEF180D34A000BA469B /* Reachability.m in Sources */,

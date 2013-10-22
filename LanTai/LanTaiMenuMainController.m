@@ -440,70 +440,6 @@
     }];
 }
 
-<<<<<<< HEAD
-=======
-#if DEBUG
--(void)testController{
-    for (int index = 0; index < 6; index++) {
-        [self.stationArray addObject:[NSString stringWithFormat:@"%d",index]];
-    }
-    for (int index = 0; index < 20; index++) {
-        CarObj *obj = [[CarObj alloc] init];
-        obj.carPlateNumber = [NSString stringWithFormat:@"EG%d",index];
-        obj.carID = [NSString stringWithFormat:@"%d",index];
-        obj.serviceName = @"洗车";
-        obj.serviceStartTime = @"06:00";
-        [self.waittingCarsArr addObject:obj];
-    }
-    for (int index = 0; index < 6; index++) {
-        CarObj *obj = [[CarObj alloc] init];
-        obj.carPlateNumber = [NSString stringWithFormat:@"EG%d",index];
-        obj.carID = [NSString stringWithFormat:@"%d",index];
-        obj.serviceName = @"洗车";
-        obj.serviceStartTime = @"06:00";
-        [self.beginningCarsDic setValue:obj forKey:[self.stationArray objectAtIndex:index]];
-    }
-    for (int index = 0; index < 20; index++) {
-        CarObj *obj = [[CarObj alloc] init];
-        obj.carPlateNumber = [NSString stringWithFormat:@"EG%d",index];
-        obj.carID = [NSString stringWithFormat:@"%d",index];
-        obj.serviceName = @"洗车";
-        obj.serviceStartTime = @"06:00";
-        [self.finishedCarsArr addObject:obj];
-    }
-    
-    for (int index = 0; index < 20; index++) {
-        [self.serveItemsArr addObject:@"便捷洗车"];
-    }
-    
-    for (int index = 0; index < 20; index++) {
-        ServiceModel *model = [[ServiceModel alloc] init];
-        model.name = @"便捷洗车";
-        [self.dataArray addObject:model];
-    }
-    [self.orderTable reloadData];
-}
-#endif
-
-#if DEBUG
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    self.leftTopScrollView.tag = -1;
-    self.bottomLeftScrollView.tag = -1;
-    [self testController];
-    [self setBegningScrollViewContextWithPosionCount:self.stationArray];
-    [self setWaittingScrollViewContext];
-    [self setFinishedScrollViewContext];
-    [self moveCarIntoCarPosion];
-    [self.serveRefreshBt setBackgroundImage:[UIImage imageNamed:@"posinTitlegraybg.png"] forState:UIControlStateHighlighted];
-    [self.serveRefreshBt setBackgroundImage:Nil forState:UIControlStateNormal];
-    self.leftTopScrollView.contentInset = UIEdgeInsetsMake(0, SCROLLVIEW_LEFT_PADDING, 0, 0);
-    self.bottomLeftScrollView.contentInset = UIEdgeInsetsMake(0, SCROLLVIEW_LEFT_PADDING, 0, 0);
-	// Do any additional setup after loading the view.
-}
-#else
->>>>>>> 711b945ceadda99b8c5fbbe4686a3c3c2bf0db06
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -520,6 +456,7 @@
     [self.topVerticalLabel setText:@"等待服务" withTextColor:[UIColor redColor]];
     [self.middleVerticalLabel setText:@"服务中" withTextColor:[UIColor colorWithRed:72/255.0 green:207/255.0 blue:173/255.0 alpha:1]];
     [self.bottomVerticalLabel setText:@"等待付款" withTextColor:[UIColor blueColor]];
+    
     //退出登录
     self.navigationItem.rightBarButtonItems = nil;
     [self addRightnaviItemsWithImage:@"back"];
