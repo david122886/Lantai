@@ -155,11 +155,14 @@
 
 -(NSString*)getTimeStrFromDateStr:(NSString*)dateStr{
     if (dateStr) {
+        dateStr = @"2012-12-45 12:1:1";
         NSArray *date = [dateStr componentsSeparatedByString:@" "];
         if ([date count] > 1) {
             NSArray *timeArr = [[date objectAtIndex:1] componentsSeparatedByString:@":"];
             if ([timeArr count] > 1) {
-                return [NSString stringWithFormat:@"%@:%@",timeArr[0],timeArr[1]];
+                NSString *hour = [[timeArr objectAtIndex:0] length] != 1?[timeArr objectAtIndex:0]:[NSString stringWithFormat:@"0%@",[timeArr objectAtIndex:0]];
+                NSString *min = [[timeArr objectAtIndex:1] length] != 1?[timeArr objectAtIndex:1]:[NSString stringWithFormat:@"0%@",[timeArr objectAtIndex:1]];
+                return [NSString stringWithFormat:@"%@:%@",hour,min];
             }
         }
     }
