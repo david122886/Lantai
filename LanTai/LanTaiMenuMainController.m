@@ -819,45 +819,51 @@ static NSMutableDictionary *work_dic = nil;
             if ([[jsonData objectForKey:@"status"]intValue] == 0) {
                 NSDictionary *order_dic = [jsonData objectForKey:@"orders"];
                 //排队等候
+                self.waittingCarsArr = [[NSMutableArray alloc]init];
                 if (![[order_dic objectForKey:@"0"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"0"]!= nil) {
                     NSArray *waiting_array = [order_dic objectForKey:@"0"];
                     if (waiting_array.count>0) {
-                        self.waittingCarsArr = [[NSMutableArray alloc]init];
+                        
                         for (int i=0; i<waiting_array.count; i++) {
                             NSDictionary *resultt = [waiting_array objectAtIndex:i];
                             CarObj *order = [self setAttributeWithDictionary:resultt];
                             [self.waittingCarsArr addObject:order];
                         }
-                        [self setWaittingScrollViewContext];
+                        
                     }
                 }
+                [self setWaittingScrollViewContext];
                 //施工中
+                self.beginningCarsDic = [[NSMutableDictionary alloc]init];
                 if (![[order_dic objectForKey:@"1"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"1"]!= nil) {
                     NSArray *working_array = [order_dic objectForKey:@"1"];
                     if (working_array.count>0) {
-                        self.beginningCarsDic = [[NSMutableDictionary alloc]init];
+                        
                         for (int i=0; i<working_array.count; i++) {
                             NSDictionary *resultt = [working_array objectAtIndex:i];
                             CarObj *order = [self setAttributeWithDictionary:resultt];
                             [self.beginningCarsDic setObject:order forKey:order.stationId];
                         }
-                        [self moveCarIntoCarPosion];
+                        
                     }
                 }
+                [self moveCarIntoCarPosion];
                 //等待付款
+                self.finishedCarsArr = [[NSMutableArray alloc]init];
                 if (![[order_dic objectForKey:@"2"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"2"]!= nil) {
                     
                     NSArray *finish_array = [order_dic objectForKey:@"2"];
                     if (finish_array.count>0) {
-                        self.finishedCarsArr = [[NSMutableArray alloc]init];
+                        
                         for (int i=0; i<finish_array.count; i++) {
                             NSDictionary *resultt = [finish_array objectAtIndex:i];
                             CarObj *order = [self setAttributeWithDictionary:resultt];
                             [self.finishedCarsArr addObject:order];
                         }
-                        [self setFinishedScrollViewContext];
+                        
                     }
                 }
+                [self setFinishedScrollViewContext];
             }else {
                 int from = [[work_dic objectForKey:@"from"]intValue];
                 int to = [[work_dic objectForKey:@"to"]intValue];
@@ -918,87 +924,90 @@ static NSMutableDictionary *finish_dic = nil;
             if ([[jsonData objectForKey:@"status"]intValue] == 1) {
                 NSDictionary *order_dic = [jsonData objectForKey:@"orders"];
                 //排队等候
+                self.waittingCarsArr = [[NSMutableArray alloc]init];
                 if (![[order_dic objectForKey:@"0"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"0"]!= nil) {
                     NSArray *waiting_array = [order_dic objectForKey:@"0"];
                     if (waiting_array.count>0) {
-                        self.waittingCarsArr = [[NSMutableArray alloc]init];
                         for (int i=0; i<waiting_array.count; i++) {
                             NSDictionary *resultt = [waiting_array objectAtIndex:i];
                             CarObj *order = [self setAttributeWithDictionary:resultt];
                             [self.waittingCarsArr addObject:order];
                         }
-                        [self setWaittingScrollViewContext];
                     }
                 }
+                [self setWaittingScrollViewContext];
                 //施工中
+                self.beginningCarsDic = [[NSMutableDictionary alloc]init];
                 if (![[order_dic objectForKey:@"1"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"1"]!= nil) {
                     NSArray *working_array = [order_dic objectForKey:@"1"];
                     if (working_array.count>0) {
-                        self.beginningCarsDic = [[NSMutableDictionary alloc]init];
                         for (int i=0; i<working_array.count; i++) {
                             NSDictionary *resultt = [working_array objectAtIndex:i];
                             CarObj *order = [self setAttributeWithDictionary:resultt];
                             [self.beginningCarsDic setObject:order forKey:order.stationId];
                         }
-                        [self moveCarIntoCarPosion];
                     }
                 }
+                [self moveCarIntoCarPosion];
                 //等待付款
+                 self.finishedCarsArr = [[NSMutableArray alloc]init];
                 if (![[order_dic objectForKey:@"2"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"2"]!= nil) {
-                    
                     NSArray *finish_array = [order_dic objectForKey:@"2"];
                     if (finish_array.count>0) {
-                        self.finishedCarsArr = [[NSMutableArray alloc]init];
                         for (int i=0; i<finish_array.count; i++) {
                             NSDictionary *resultt = [finish_array objectAtIndex:i];
                             CarObj *order = [self setAttributeWithDictionary:resultt];
                             [self.finishedCarsArr addObject:order];
                         }
-                        [self setFinishedScrollViewContext];
                     }
                 }
+                [self setFinishedScrollViewContext];
             }else if ([[jsonData objectForKey:@"status"]intValue] == 0) {
                 NSDictionary *order_dic = [jsonData objectForKey:@"orders"];
                 //排队等候
+                self.waittingCarsArr = [[NSMutableArray alloc]init];
                 if (![[order_dic objectForKey:@"0"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"0"]!= nil) {
                     NSArray *waiting_array = [order_dic objectForKey:@"0"];
                     if (waiting_array.count>0) {
-                        self.waittingCarsArr = [[NSMutableArray alloc]init];
+                        
                         for (int i=0; i<waiting_array.count; i++) {
                             NSDictionary *resultt = [waiting_array objectAtIndex:i];
                             CarObj *order = [self setAttributeWithDictionary:resultt];
                             [self.waittingCarsArr addObject:order];
                         }
-                        [self setWaittingScrollViewContext];
+                        
                     }
                 }
+                [self setWaittingScrollViewContext];
                 //施工中
+                self.beginningCarsDic = [[NSMutableDictionary alloc]init];
                 if (![[order_dic objectForKey:@"1"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"1"]!= nil) {
                     NSArray *working_array = [order_dic objectForKey:@"1"];
                     if (working_array.count>0) {
-                        self.beginningCarsDic = [[NSMutableDictionary alloc]init];
+                        
                         for (int i=0; i<working_array.count; i++) {
                             NSDictionary *resultt = [working_array objectAtIndex:i];
                             CarObj *order = [self setAttributeWithDictionary:resultt];
                             [self.beginningCarsDic setObject:order forKey:order.stationId];
                         }
-                        [self moveCarIntoCarPosion];
+                        
                     }
                 }
+                [self moveCarIntoCarPosion];
                 //等待付款
+                 self.finishedCarsArr = [[NSMutableArray alloc]init];
                 if (![[order_dic objectForKey:@"2"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"2"]!= nil) {
-                    
                     NSArray *finish_array = [order_dic objectForKey:@"2"];
                     if (finish_array.count>0) {
-                        self.finishedCarsArr = [[NSMutableArray alloc]init];
+                       
                         for (int i=0; i<finish_array.count; i++) {
                             NSDictionary *resultt = [finish_array objectAtIndex:i];
                             CarObj *order = [self setAttributeWithDictionary:resultt];
                             [self.finishedCarsArr addObject:order];
                         }
-                        [self setFinishedScrollViewContext];
                     }
                 }
+                [self setFinishedScrollViewContext];
                 [Utils errorAlert:@"已经开始等待付款!"];
             }else {
                 int from = [[finish_dic objectForKey:@"from"]intValue];
