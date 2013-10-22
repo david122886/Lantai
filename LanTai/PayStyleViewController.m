@@ -128,6 +128,7 @@
             }else{
                 billing = @"0";
             }
+            DLog(@"order = %@",order);
             [params setObject:[DataService sharedService].store_id forKey:@"store_id"];
             [params setObject:[order objectForKey:@"order_id"] forKey:@"order_id"];
             [params setObject:[order objectForKey:@"is_please"] forKey:@"please"];

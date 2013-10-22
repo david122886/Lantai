@@ -166,22 +166,22 @@
                                 <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             </view>
                             <view contentMode="scaleToFill" id="8kV-1Z-qPU" userLabel="Viewleft">
-                                <rect key="frame" x="39" y="43" width="787" height="725"/>
+                                <rect key="frame" x="0.0" y="43" width="828" height="725"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <view alpha="0.89999999999999991" contentMode="scaleToFill" id="uAq-XF-htU" userLabel="middlebgview">
-                                        <rect key="frame" x="0.0" y="144" width="787" height="440"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <rect key="frame" x="0.0" y="144" width="828" height="440"/>
+                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </view>
                                     <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" alpha="0.79999999999999982" contentMode="scaleToFill" bounces="NO" id="B6s-ys-3uy" userLabel="Scroll View1">
-                                        <rect key="frame" x="0.0" y="0.0" width="787" height="144"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="828" height="144"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </scrollView>
                                     <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" alpha="0.80000000000000004" contentMode="scaleToFill" bounces="NO" id="Zbx-wO-cBh" userLabel="Scroll View3">
-                                        <rect key="frame" x="0.0" y="583" width="787" height="144"/>
+                                        <rect key="frame" x="0.0" y="583" width="828" height="144"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -193,6 +193,21 @@
                                     <outletCollection property="gestureRecognizers" destination="vF6-w4-taG" appends="YES" id="cYh-la-u8y"/>
                                 </connections>
                             </view>
+                            <view contentMode="scaleToFill" id="rB9-NW-G3j" userLabel="topLabel" customClass="DRVerticalLabel">
+                                <rect key="frame" x="0.0" y="43" width="40" height="144"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </view>
+                            <view contentMode="scaleToFill" id="0cj-Ds-ocE" userLabel="middleLabel" customClass="DRVerticalLabel">
+                                <rect key="frame" x="0.0" y="187" width="40" height="440"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </view>
+                            <view contentMode="scaleToFill" id="jiD-Er-jVS" userLabel="bottomLabel" customClass="DRVerticalLabel">
+                                <rect key="frame" x="0.0" y="625" width="40" height="143"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
@@ -203,12 +218,15 @@
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <connections>
                         <outlet property="bottomLeftScrollView" destination="Zbx-wO-cBh" id="chh-aw-01K"/>
+                        <outlet property="bottomVerticalLabel" destination="jiD-Er-jVS" id="PlN-im-RQ8"/>
                         <outlet property="carNumberTextField" destination="3PM-i4-8vy" id="rfP-nv-k44"/>
                         <outlet property="leftBackgroundView" destination="8kV-1Z-qPU" id="m9D-fa-H2p"/>
                         <outlet property="leftMiddlebgView" destination="uAq-XF-htU" id="aZw-Jv-FFM"/>
                         <outlet property="leftTopScrollView" destination="B6s-ys-3uy" id="1UO-2G-2da"/>
+                        <outlet property="middleVerticalLabel" destination="0cj-Ds-ocE" id="bIY-58-X6x"/>
                         <outlet property="orderTable" destination="Lgw-xB-Fpn" id="yiD-WX-ZKq"/>
                         <outlet property="serveRefreshBt" destination="Ib1-P2-6cu" id="Qhb-MS-KiP"/>
+                        <outlet property="topVerticalLabel" destination="rB9-NW-G3j" id="Ml4-Wu-k3U"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Kns-EA-Or7" userLabel="First Responder" sceneMemberID="firstResponder"/>

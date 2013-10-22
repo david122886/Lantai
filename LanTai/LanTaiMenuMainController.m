@@ -17,9 +17,10 @@
 #import "StationModel.h"
 
 #define CELL_WIDHT  250
-#define CELL_POSION_WIDHT  250
+#define CELL_POSION_WIDHT  240
 #define CELL_HEIGHT 134
 #define CELL_PADDING 10
+#define SCROLLVIEW_LEFT_PADDING 45
 #define SERVE_ITEM_HEIGHT 70
 
 @interface LanTaiMenuMainController ()
@@ -333,7 +334,7 @@
 -(CGRect)getBeginningScrollViewItemRectWithIndex:(int)index{
     
     float height = (708 -CGRectGetHeight(self.bottomLeftScrollView.frame)*2 - CELL_PADDING*3)/2;
-    return (CGRect){CELL_PADDING+(CELL_POSION_WIDHT+CELL_PADDING)*(index/2),CGRectGetMaxY(self.leftTopScrollView.frame)+CELL_PADDING*2+(height+CELL_PADDING)*(index%2),CELL_POSION_WIDHT,height};
+    return (CGRect){SCROLLVIEW_LEFT_PADDING+CELL_PADDING+(CELL_POSION_WIDHT+CELL_PADDING)*(index/2),CGRectGetMaxY(self.leftTopScrollView.frame)+CELL_PADDING*2+(height+CELL_PADDING)*(index%2),CELL_POSION_WIDHT,height};
 }
 
 -(void)exchangeBeginningCarCellViewPositionWithTouchView:(CarCellView*)touchView{
@@ -439,6 +440,70 @@
     }];
 }
 
+<<<<<<< HEAD
+=======
+#if DEBUG
+-(void)testController{
+    for (int index = 0; index < 6; index++) {
+        [self.stationArray addObject:[NSString stringWithFormat:@"%d",index]];
+    }
+    for (int index = 0; index < 20; index++) {
+        CarObj *obj = [[CarObj alloc] init];
+        obj.carPlateNumber = [NSString stringWithFormat:@"EG%d",index];
+        obj.carID = [NSString stringWithFormat:@"%d",index];
+        obj.serviceName = @"洗车";
+        obj.serviceStartTime = @"06:00";
+        [self.waittingCarsArr addObject:obj];
+    }
+    for (int index = 0; index < 6; index++) {
+        CarObj *obj = [[CarObj alloc] init];
+        obj.carPlateNumber = [NSString stringWithFormat:@"EG%d",index];
+        obj.carID = [NSString stringWithFormat:@"%d",index];
+        obj.serviceName = @"洗车";
+        obj.serviceStartTime = @"06:00";
+        [self.beginningCarsDic setValue:obj forKey:[self.stationArray objectAtIndex:index]];
+    }
+    for (int index = 0; index < 20; index++) {
+        CarObj *obj = [[CarObj alloc] init];
+        obj.carPlateNumber = [NSString stringWithFormat:@"EG%d",index];
+        obj.carID = [NSString stringWithFormat:@"%d",index];
+        obj.serviceName = @"洗车";
+        obj.serviceStartTime = @"06:00";
+        [self.finishedCarsArr addObject:obj];
+    }
+    
+    for (int index = 0; index < 20; index++) {
+        [self.serveItemsArr addObject:@"便捷洗车"];
+    }
+    
+    for (int index = 0; index < 20; index++) {
+        ServiceModel *model = [[ServiceModel alloc] init];
+        model.name = @"便捷洗车";
+        [self.dataArray addObject:model];
+    }
+    [self.orderTable reloadData];
+}
+#endif
+
+#if DEBUG
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    self.leftTopScrollView.tag = -1;
+    self.bottomLeftScrollView.tag = -1;
+    [self testController];
+    [self setBegningScrollViewContextWithPosionCount:self.stationArray];
+    [self setWaittingScrollViewContext];
+    [self setFinishedScrollViewContext];
+    [self moveCarIntoCarPosion];
+    [self.serveRefreshBt setBackgroundImage:[UIImage imageNamed:@"posinTitlegraybg.png"] forState:UIControlStateHighlighted];
+    [self.serveRefreshBt setBackgroundImage:Nil forState:UIControlStateNormal];
+    self.leftTopScrollView.contentInset = UIEdgeInsetsMake(0, SCROLLVIEW_LEFT_PADDING, 0, 0);
+    self.bottomLeftScrollView.contentInset = UIEdgeInsetsMake(0, SCROLLVIEW_LEFT_PADDING, 0, 0);
+	// Do any additional setup after loading the view.
+}
+#else
+>>>>>>> 711b945ceadda99b8c5fbbe4686a3c3c2bf0db06
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -447,6 +512,14 @@
     self.leftTopScrollView.tag = -1;
     self.bottomLeftScrollView.tag = -1;
 
+    self.leftTopScrollView.contentInset = UIEdgeInsetsMake(0, SCROLLVIEW_LEFT_PADDING, 0, 0);
+    self.bottomLeftScrollView.contentInset = UIEdgeInsetsMake(0, SCROLLVIEW_LEFT_PADDING, 0, 0);
+    [self.topVerticalLabel setInset:UIEdgeInsetsMake(10, 0, 10, 0)];
+    [self.middleVerticalLabel setInset:UIEdgeInsetsMake(10, 0, 10, 0)];
+    [self.bottomVerticalLabel setInset:UIEdgeInsetsMake(10, 0, 10, 0)];
+    [self.topVerticalLabel setText:@"等待服务" withTextColor:[UIColor redColor]];
+    [self.middleVerticalLabel setText:@"服务中" withTextColor:[UIColor colorWithRed:72/255.0 green:207/255.0 blue:173/255.0 alpha:1]];
+    [self.bottomVerticalLabel setText:@"等待付款" withTextColor:[UIColor blueColor]];
     //退出登录
     self.navigationItem.rightBarButtonItems = nil;
     [self addRightnaviItemsWithImage:@"back"];

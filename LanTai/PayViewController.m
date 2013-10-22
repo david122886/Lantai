@@ -107,6 +107,7 @@
         payStyleView = nil;
         payStyleView = [[PayStyleViewController alloc] initWithNibName:@"PayStyleViewController" bundle:nil];
         payStyleView.delegate = self;
+        
         NSMutableDictionary *dic = [NSMutableDictionary dictionary];
         if (![[orderInfo objectForKey:@"order_id"] isKindOfClass:[NSNull class]] && [orderInfo objectForKey:@"order_id"]!= nil) {
             [dic setObject:[orderInfo objectForKey:@"order_id"] forKey:@"order_id"];
@@ -114,6 +115,8 @@
             [dic setObject:self.lblCarNum.text forKey:@"carNum"];
             [dic setObject:[orderInfo objectForKey:@"order_code"] forKey:@"code"];
         }
+        self.payString = [self checkForm];
+        [dic setObject:self.payString forKey:@"prods"];
         [dic setObject:[orderInfo objectForKey:@"order_code"] forKey:@"code"];
         [dic setObject:[NSNumber numberWithInt:0] forKey:@"is_please"];
         [dic setObject:[NSString stringWithFormat:@"%.2f",self.total_count] forKey:@"price"];

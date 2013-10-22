@@ -103,6 +103,7 @@
 		637EE7A11810F36A00C8CE6F /* posionTitlegreenbg.png in Resources */ = {isa = PBXBuildFile; fileRef = 637EE79F1810F36A00C8CE6F /* posionTitlegreenbg.png */; };
 		637EE7A41811072D00C8CE6F /* serveGraybg.png in Resources */ = {isa = PBXBuildFile; fileRef = 637EE7A21811072D00C8CE6F /* serveGraybg.png */; };
 		637EE7A51811072D00C8CE6F /* serveRedbg.png in Resources */ = {isa = PBXBuildFile; fileRef = 637EE7A31811072D00C8CE6F /* serveRedbg.png */; };
+		637EE7A818112A2D00C8CE6F /* DRVerticalLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 637EE7A718112A2D00C8CE6F /* DRVerticalLabel.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -239,6 +240,8 @@
 		637EE79F1810F36A00C8CE6F /* posionTitlegreenbg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = posionTitlegreenbg.png; sourceTree = "<group>"; };
 		637EE7A21811072D00C8CE6F /* serveGraybg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = serveGraybg.png; sourceTree = "<group>"; };
 		637EE7A31811072D00C8CE6F /* serveRedbg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = serveRedbg.png; sourceTree = "<group>"; };
+		637EE7A618112A2D00C8CE6F /* DRVerticalLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DRVerticalLabel.h; sourceTree = "<group>"; };
+		637EE7A718112A2D00C8CE6F /* DRVerticalLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DRVerticalLabel.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -514,6 +517,8 @@
 				0E9CCC14180D415B00BA469B /* PackageCardCell.m */,
 				0E9CCC16180D416D00BA469B /* ProductHeader.h */,
 				0E9CCC17180D416D00BA469B /* ProductHeader.m */,
+				637EE7A618112A2D00C8CE6F /* DRVerticalLabel.h */,
+				637EE7A718112A2D00C8CE6F /* DRVerticalLabel.m */,
 			);
 			name = views;
 			sourceTree = "<group>";
@@ -658,6 +663,11 @@
 				0EA2E063180E811A00B4FE02 /* UITextView+Border.m in Sources */,
 				0EA2E040180E4E9800B4FE02 /* InitViewController.m in Sources */,
 				0E9CCBF0180D34A000BA469B /* Utils.m in Sources */,
+<<<<<<< HEAD
+=======
+				63268FD7180D142C006E06E3 /* LanTaiMainLayout.m in Sources */,
+				637EE7A818112A2D00C8CE6F /* DRVerticalLabel.m in Sources */,
+>>>>>>> 711b945ceadda99b8c5fbbe4686a3c3c2bf0db06
 				0E9CCBD1180D343800BA469B /* AHAlertView.m in Sources */,
 				0E9CCC18180D416D00BA469B /* ProductHeader.m in Sources */,
 				0E9CCBEF180D34A000BA469B /* Reachability.m in Sources */,

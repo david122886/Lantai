@@ -29,7 +29,7 @@
         [self addSubview:self.carNumberLabel];
         self.carNumberLabel.backgroundColor = [UIColor clearColor];
         [self.carNumberLabel setTextAlignment:NSTextAlignmentCenter];
-        [self.carNumberLabel setFont:[UIFont systemFontOfSize:25]];
+        [self.carNumberLabel setFont:[UIFont systemFontOfSize:20]];
         [self.carNumberLabel setTextColor:[UIColor whiteColor]];
         
         self.coverView = [[UIView alloc] initWithFrame:CGRectZero];
