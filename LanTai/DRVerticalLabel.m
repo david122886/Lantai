@@ -24,6 +24,7 @@
     }
     if (!self.label) {
         self.label = [[UILabel alloc] initWithFrame:CGRectZero];
+        self.label.backgroundColor = [UIColor clearColor];
         self.label.numberOfLines = 0;
         [self addSubview:self.label];
         [self.label setTextAlignment:NSTextAlignmentCenter];

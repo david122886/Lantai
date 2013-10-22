@@ -92,21 +92,6 @@
 }
 */
 
--(void)layoutSubviews{
-    [super layoutSubviews];
-    self.titileBackView.frame = (CGRect){0,0,self.frame.size.width,CAR_TITLE_HEIGHT+CAR_PADDING*2};
-    self.posinIDLabel.frame = (CGRect){CAR_PADDING,CAR_PADDING,(CGRectGetWidth(self.frame)-CAR_PADDING*3)*2/3,CAR_TITLE_HEIGHT};
-    self.posionDateImageView.frame = (CGRect){CGRectGetMaxX(self.posinIDLabel.frame)+CAR_PADDING,CGRectGetHeight(self.titileBackView.frame)/2 - CAR_DATE_IMAGEWIDTH/2,CAR_DATE_IMAGEWIDTH,CAR_DATE_IMAGEWIDTH};
-    self.posinDateLabel.frame = (CGRect){CAR_PADDING/2+CGRectGetMaxX(self.posionDateImageView.frame),CAR_PADDING,(CGRectGetWidth(self.frame)-CAR_PADDING*3)/3-CAR_DATE_IMAGEWIDTH,CAR_TITLE_HEIGHT};
-    self.serveNameLabel.frame = (CGRect){CAR_PADDING,CGRectGetMaxY(self.titileBackView.frame),self.frame.size.width - CAR_PADDING*2,CAR_TITLE_HEIGHT};
-    
-    float carHeight = CGRectGetHeight(self.frame) - CGRectGetHeight(self.titileBackView.frame) - CAR_CARPADDING*4/3;
-    float carWidth = CGRectGetWidth(self.frame) - CAR_CARPADDING*2;
-    self.carView.frame = (CGRect){CAR_CARPADDING,CAR_CARPADDING+CGRectGetMaxY(self.titileBackView.frame),carWidth,carHeight};
-    self.coverLabel.frame = (CGRect){0,0,self.frame.size.width,CAR_TITLE_HEIGHT};
-    self.coverLabel.center = self.carView.center;
-    self.carImageView.frame = self.carView.frame;
-}
 
 -(void)setIsEmpty:(BOOL)isEmpty{
     _isEmpty = isEmpty;
@@ -157,13 +142,31 @@
     }
 }
 
+-(void)layoutSubviews{
+    [super layoutSubviews];
+    self.titileBackView.frame = (CGRect){0,0,self.frame.size.width,CAR_TITLE_HEIGHT+CAR_PADDING*2};
+    self.posinIDLabel.frame = (CGRect){CAR_PADDING,CAR_PADDING,(CGRectGetWidth(self.frame)-CAR_PADDING*3)*2/3,CAR_TITLE_HEIGHT};
+    self.posionDateImageView.frame = (CGRect){CGRectGetMaxX(self.posinIDLabel.frame),CGRectGetHeight(self.titileBackView.frame)/2 - CAR_DATE_IMAGEWIDTH/2,CAR_DATE_IMAGEWIDTH,CAR_DATE_IMAGEWIDTH};
+    self.posinDateLabel.frame = (CGRect){CAR_PADDING/2+CGRectGetMaxX(self.posionDateImageView.frame),CAR_PADDING,(CGRectGetWidth(self.frame))/3-CAR_DATE_IMAGEWIDTH,CAR_TITLE_HEIGHT};
+    self.serveNameLabel.frame = (CGRect){CAR_PADDING,CGRectGetMaxY(self.titileBackView.frame),self.frame.size.width - CAR_PADDING*2,CAR_TITLE_HEIGHT};
+    
+    float carHeight = CGRectGetHeight(self.frame) - CGRectGetHeight(self.titileBackView.frame) - CAR_CARPADDING*4/3;
+    float carWidth = CGRectGetWidth(self.frame) - CAR_CARPADDING*2;
+    self.carView.frame = (CGRect){CAR_CARPADDING,CAR_CARPADDING+CGRectGetMaxY(self.titileBackView.frame),carWidth,carHeight};
+    self.coverLabel.frame = (CGRect){0,0,self.frame.size.width,CAR_TITLE_HEIGHT};
+    self.coverLabel.center = self.carView.center;
+    self.carImageView.frame = self.carView.frame;
+}
+
 -(NSString*)getTimeStrFromDateStr:(NSString*)dateStr{
     if (dateStr) {
         NSArray *date = [dateStr componentsSeparatedByString:@" "];
         if ([date count] > 1) {
             NSArray *timeArr = [[date objectAtIndex:1] componentsSeparatedByString:@":"];
             if ([timeArr count] > 1) {
-                return [NSString stringWithFormat:@"%@:%@",timeArr[0],timeArr[1]];
+                NSString *hour = [[timeArr objectAtIndex:0] length] != 1?[timeArr objectAtIndex:0]:[NSString stringWithFormat:@"0%@",[timeArr objectAtIndex:0]];
+                NSString *min = [[timeArr objectAtIndex:1] length] != 1?[timeArr objectAtIndex:1]:[NSString stringWithFormat:@"0%@",[timeArr objectAtIndex:1]];
+                return [NSString stringWithFormat:@"%@:%@",hour,min];
             }
         }
     }

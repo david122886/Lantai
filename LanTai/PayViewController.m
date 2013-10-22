@@ -532,7 +532,7 @@
 #pragma mark -取消订单（排队等待中）
 -(void)cancleOrderr {
     STHTTPRequest *r = [STHTTPRequest requestWithURLString:[NSString stringWithFormat:@"%@%@",kHost,kPayOrder]];
-    [r setPOSTDictionary:[NSDictionary dictionaryWithObjectsAndKeys:[orderInfo objectForKey:@"order_id"],@"order_id",@"1",@"opt_type", nil]];
+    [r setPOSTDictionary:[NSDictionary dictionaryWithObjectsAndKeys:[orderInfo objectForKey:@"order_id"],@"order_id",@"1",@"opt_type",[DataService sharedService].store_id,@"store_id", nil]];
     [r setPostDataEncoding:NSUTF8StringEncoding];
     NSError *error = nil;
     NSDictionary *result = [[r startSynchronousWithError:&error] objectFromJSONString];

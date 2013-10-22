@@ -89,8 +89,8 @@
             if ([[jsonData objectForKey:@"status"]intValue] == 0) {
                 //工位数组
                 NSArray *station_array = [jsonData objectForKey:@"station_ids"];
+                self.stationArray = [[NSMutableArray alloc]init];
                 if (station_array.count>0) {
-                    self.stationArray = [[NSMutableArray alloc]init];
                     for (int k=0; k<station_array.count; k++) {
                         NSDictionary *s_dic = [station_array objectAtIndex:k];
                         StationModel *stationM = [[StationModel alloc]init];
@@ -102,8 +102,8 @@
                 }
                 //服务
                 NSArray *result_array = [NSArray arrayWithArray:[jsonData objectForKey:@"services"]];
+                 self.dataArray = [[NSMutableArray alloc]init];
                 if (result_array.count>0) {
-                    self.dataArray = [[NSMutableArray alloc]init];
                     for (int i=0; i<result_array.count; i++) {
                         NSDictionary *dic = [result_array objectAtIndex:i];
                         ServiceModel *service = [[ServiceModel alloc]init];
@@ -112,17 +112,15 @@
                         service.price = [NSString stringWithFormat:@"%@.00元",[dic objectForKey:@"price"]];
                         [self.dataArray addObject:service];
                     }
-                    if (self.dataArray.count>0) {
-                        [self.orderTable reloadData];
-                    }
                 }
+                [self.orderTable reloadData];
                 //订单的数组
                 NSDictionary *order_dic = [jsonData objectForKey:@"orders"];
                 //排队等候
                 if (![[order_dic objectForKey:@"0"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"0"]!= nil) {
                     NSArray *waiting_array = [order_dic objectForKey:@"0"];
+                    self.waittingCarsArr = [[NSMutableArray alloc]init];
                     if (waiting_array.count>0) {
-                        self.waittingCarsArr = [[NSMutableArray alloc]init];
                         for (int i=0; i<waiting_array.count; i++) {
                             NSDictionary *result = [waiting_array objectAtIndex:i];
                             CarObj *order = [self setAttributeWithDictionary:result];
@@ -134,8 +132,8 @@
                 //施工中
                 if (![[order_dic objectForKey:@"1"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"1"]!= nil) {
                     NSArray *working_array = [order_dic objectForKey:@"1"];
+                    self.beginningCarsDic = [[NSMutableDictionary alloc]init];
                     if (working_array.count>0) {
-                        self.beginningCarsDic = [[NSMutableDictionary alloc]init];
                         for (int i=0; i<working_array.count; i++) {
                             NSDictionary *result = [working_array objectAtIndex:i];
                             CarObj *order = [self setAttributeWithDictionary:result];
@@ -149,8 +147,8 @@
                 if (![[order_dic objectForKey:@"2"]isKindOfClass:[NSNull class]] && [order_dic objectForKey:@"2"]!= nil) {
                     
                     NSArray *finish_array = [order_dic objectForKey:@"2"];
+                    self.finishedCarsArr = [[NSMutableArray alloc]init];
                     if (finish_array.count>0) {
-                        self.finishedCarsArr = [[NSMutableArray alloc]init];
                         for (int i=0; i<finish_array.count; i++) {
                             NSDictionary *result = [finish_array objectAtIndex:i];
                             CarObj *order = [self setAttributeWithDictionary:result];
