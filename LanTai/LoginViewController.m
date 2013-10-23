@@ -71,8 +71,8 @@
     [(AHAlertView*) timer.userInfo  dismissWithStyle:AHAlertViewDismissalStyleZoomDown];
 }
 - (BOOL)checkForm{
-    NSString *passport = [[NSString alloc] initWithString: self.txtName.text];
-    NSString *password = [[NSString alloc] initWithString: self.txtPwd.text];
+    NSString *passport = [[NSString alloc] initWithString: self.txtName.text?:@""];
+    NSString *password = [[NSString alloc] initWithString: self.txtPwd.text?:@""];
     NSString *msgStr = @"";
     if (passport.length == 0){
         msgStr = @"请输入用户名";
