@@ -431,21 +431,11 @@
             }
             
         }else if([product objectForKey:@"products"]){
-            //套餐卡
-            //            NSMutableString *p_str = [NSMutableString string];
-            //            for (NSDictionary *pro in [product objectForKey:@"products"]) {
-            //                if([[pro objectForKey:@"selected"] intValue]==0){
-            //
-            //                    int num = [[pro objectForKey:@"Total_num"]intValue] - [[pro objectForKey:@"num"]intValue];
-            //                    [p_str appendFormat:@"%d=%d-",[[pro objectForKey:@"product_id"] intValue],num];
-            //                }
-            //            }
             z += 1;
-            int has_pcard = [[product objectForKey:@"has_p_card"] intValue];
-            if (has_pcard == 0) {
-                [prod_ids appendFormat:@"3_%d,",[[product objectForKey:@"id"] intValue]];
-            }else {
-                [prod_ids appendFormat:@"3_%d",[[product objectForKey:@"id"] intValue]];
+            for (NSDictionary *pro in [product objectForKey:@"products"]) {
+                if([[pro objectForKey:@"selected"] intValue]==0) {//被选中
+                    [prod_ids appendFormat:@"3_%d",[[product objectForKey:@"cpard_relation_id"] intValue]];
+                }
             }
         }
     }
