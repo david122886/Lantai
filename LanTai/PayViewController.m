@@ -60,22 +60,30 @@
     [DataService sharedService].refreshing = YES;
     [self.navigationController popViewControllerAnimated:YES];
 }
+
+
 -(void )addRightnaviItemsWithImage:(NSString *)imageName {
-    NSMutableArray *mycustomButtons = [NSMutableArray array];
-    if (imageName != nil && ![imageName isEqualToString:@""]) {
-        UIButton *btn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
-        [btn setImage:[UIImage imageNamed:imageName] forState:UIControlStateNormal];
-        [btn setImage:[UIImage imageNamed:[NSString stringWithFormat:@"%@_active", imageName]] forState:UIControlStateHighlighted];
-        btn.userInteractionEnabled = YES;
-        [btn addTarget:self action:@selector(rightTapped:) forControlEvents:UIControlEventTouchUpInside];
-        UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithCustomView:btn];
-        [mycustomButtons addObject: item];
-        btn = nil;
-        item = nil;
-    }
-    self.navigationItem.rightBarButtonItems=mycustomButtons;
+    UILabel* lbNavTitle = [[UILabel alloc] initWithFrame:CGRectMake(0,40,1024,40)];
+    [lbNavTitle setTextAlignment:NSTextAlignmentLeft];
+    lbNavTitle.backgroundColor = [UIColor clearColor];
+    [lbNavTitle setTextColor:[UIColor whiteColor]];
+    [lbNavTitle setFont:[UIFont systemFontOfSize:25]];
+    lbNavTitle.text = @"杭州澜台OMS数字化门店";
+    self.navigationItem.titleView = lbNavTitle;
+    UIImageView *rightItemView = [[UIImageView alloc] init];
+    rightItemView.image = [UIImage imageNamed:@"shareBt.png"];
+    
+    UIButton *btn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
+    [btn setImage:[UIImage imageNamed:@"shareBt.png"] forState:UIControlStateNormal];
+    btn.userInteractionEnabled = YES;
+    [btn addTarget:self action:@selector(rightTapped:) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithCustomView:btn];
+    
+    self.navigationItem.rightBarButtonItem  = item;
+    
     [self.navigationItem setHidesBackButton:YES animated:YES];
 }
+
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [DataService sharedService].price_id = nil;
