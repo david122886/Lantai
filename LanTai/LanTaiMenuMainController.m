@@ -384,8 +384,6 @@
             [posion1 setCarObj:fromObj];
         }
     }
-//    CarPosionView *posion1 = [self.posionItemArr objectAtIndex:[self.stationArray indexOfObject:[NSString stringWithFormat:@"%d",from]]];
-//    [posion1 setCarObj:fromObj];
     [self.beginningCarsDic setValue:fromObj forKey:[NSString stringWithFormat:@"%d",from]];
     [UIView animateWithDuration:0.5 animations:^{
         for (UIView *subView in [self.bottomLeftScrollView subviews]) {
@@ -402,7 +400,6 @@
 }
 
 -(void)moveCarViewFromBeginningScrollViewIntoBottomRightScrollView:(CarCellView*)carView{
-    //    NSLog(@"moveCarViewFromBeginningScrollViewIntoBottomRightScrollView:carViewTag:%d",carView.tag);
     CarObj *carObj = [self.beginningCarsDic objectForKey:[NSString stringWithFormat:@"%d",carView.posionID]];
     [self.finishedCarsArr insertObject:carObj atIndex:0];
     [self.beginningCarsDic removeObjectForKey:[NSString stringWithFormat:@"%d",carView.posionID]];

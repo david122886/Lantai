@@ -13,6 +13,8 @@
 #define CAR_TITLE_HEIGHT 35
 #define CAR_DATE_IMAGEWIDTH 25
 #define CAR_FONT_SIZE 20
+
+
 @interface CarPosionView()
 @property(nonatomic,strong) UILabel *posinIDLabel;
 
@@ -31,35 +33,26 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        // Initialization code
         self.titileBackView = [[UIImageView alloc] initWithFrame:CGRectZero];
-        //        self.titileBackView.backgroundColor = [UIColor orangeColor];
-//        self.titileBackView.layer.shadowColor = [UIColor darkGrayColor].CGColor;
-//        self.titileBackView.layer.shadowOffset = (CGSize){0,2};
-//        self.titileBackView.layer.shadowOpacity = 1;
         [self addSubview:self.titileBackView];
         [self.titileBackView setBackgroundColor:[UIColor clearColor]];
         
         self.serveNameLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         [self.serveNameLabel setTextAlignment:NSTextAlignmentCenter];
         [self.serveNameLabel setFont:[UIFont systemFontOfSize:CAR_FONT_SIZE]];
-        //        self.serveNameLabel.backgroundColor = [UIColor orangeColor];
         self.serveNameLabel.backgroundColor = [UIColor clearColor];
         [self addSubview:self.serveNameLabel];
         
         self.posinIDLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-        //        self.posinIDLabel.backgroundColor = [UIColor redColor];
         self.posinIDLabel.backgroundColor = [UIColor clearColor];
         [self.posinIDLabel setFont:[UIFont systemFontOfSize:CAR_FONT_SIZE]];
         [self.titileBackView addSubview:self.posinIDLabel];
         
         self.posionDateImageView = [[UIImageView alloc] initWithFrame:CGRectZero];
-        //        self.posionDateImageView.backgroundColor = [UIColor blueColor];
-        self.posionDateImageView.image = [UIImage imageNamed:@"clock.png"];
+//        self.posionDateImageView.image = [UIImage imageNamed:@"clock.png"];
         [self.titileBackView addSubview:self.posionDateImageView];
         
         self.posinDateLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-        //        self.posinDateLabel.backgroundColor = [UIColor purpleColor];
         self.posinDateLabel.backgroundColor = [UIColor clearColor];
         [self.posinDateLabel setFont:[UIFont systemFontOfSize:CAR_FONT_SIZE]];
         [self.titileBackView addSubview:self.posinDateLabel];
@@ -67,7 +60,6 @@
         self.carImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"grayCar.png"]];
         [self addSubview:self.carImageView];
         self.carView = [[CarCellView alloc]initWithFrame:CGRectZero];
-        //        self.carView.backgroundColor = [UIColor darkGrayColor];
         self.carView.backgroundColor = [UIColor clearColor];
         [self addSubview:self.carView];
         
@@ -95,33 +87,33 @@
 -(void)setIsEmpty:(BOOL)isEmpty{
     _isEmpty = isEmpty;
     if (isEmpty) {
-//        [self.titileBackView setBackgroundColor:[UIColor colorWithRed:246/255.0 green:248/255.0 blue:250/255.0 alpha:1]];
         [self.titileBackView setImage:[[UIImage imageNamed:@"posinTitlegraybg.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 20, 0)]];
-//        [self.titileBackView setBackgroundColor:[UIColor colorWithPatternImage:[[UIImage imageNamed:@"posinTitlegraybg.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 20, 0)]]];
+        self.circularTimer.hidden = YES;
         self.carView.state = CARNOTHING;
         self.serveNameLabel.text = nil;
         self.posinDateLabel.text = @"00:00";
         self.serveNameLabel.text = nil;
         self.posinIDLabel.textColor = [UIColor darkGrayColor];
         self.posinDateLabel.textColor = [UIColor darkGrayColor];
+        [self.circularTimer stop];
     }else{
         self.posinDateLabel.text = self.posionDate;
         self.carView.state = CARBEGINNING;
         self.serveNameLabel.text = self.posionServeName;
-//        self.titileBackView.backgroundColor = [UIColor colorWithRed:72/255.0 green:207/255.0 blue:173/255.0 alpha:1];
+
         [self.titileBackView setImage:[[UIImage imageNamed:@"posionTitlegreenbg.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 2, 0)]];
-//        [self.titileBackView setBackgroundColor:[UIColor colorWithPatternImage:[[UIImage imageNamed:@"posionTitlegreenbg.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 2, 0)]]];
+
         self.posinIDLabel.textColor = [UIColor whiteColor];
         self.posinDateLabel.textColor = [UIColor whiteColor];
+        self.circularTimer.initialDate = self.initialDate;
+        self.circularTimer.finalDate = self.finalDate;
+        [self.circularTimer setup];
     }
     [self.coverLabel setHidden:!isEmpty];
     [self.carImageView setHidden:!isEmpty];
+     [self.circularTimer setHidden:isEmpty];
+    
 }
-
-//-(void)setPosionID:(int)posionID{
-//    _posionID = posionID;
-//    self.posinIDLabel.text = [NSString stringWithFormat:@"%d工号位",_posionID];
-//}
 
 -(void)setPosinName:(NSString *)posinName{
     _posinName = posinName;
@@ -134,6 +126,14 @@
         self.carView.state = CARBEGINNING;
         
         self.posionDate = [self getTimeStrFromDateStr:car.serviceStartTime];
+        
+        NSDateFormatter *dateformat = [[NSDateFormatter alloc]init];
+        [dateformat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+        self.initialDate = [dateformat dateFromString:car.serviceStartTime];
+        self.finalDate = [dateformat dateFromString:car.serviceEndTime];
+        DLog(@"%@,%@",self.finalDate,self.initialDate);
+        [self.posionDateImageView addSubview:self.circularTimer];
+
         self.posionServeName = car.serviceName;
         self.isEmpty = NO;
     }else{
@@ -171,5 +171,24 @@
     }
     return @"00:00";
     
+}
+
+-(CircularTimer *)circularTimer{
+    if (!_circularTimer) {
+        _circularTimer = [[CircularTimer alloc] initWithPosition:CGPointMake(-5.0f, -2.0f)
+                                                                                       radius:round(15)
+                                                                               internalRadius:round(12)
+                                                                            circleStrokeColor:[UIColor colorWithRed:0.5765 green:0.0078 blue:0.0196 alpha:1.0]
+                                                                      activeCircleStrokeColor:[UIColor whiteColor]
+                                                                                  initialDate:self.initialDate
+                                                                                    finalDate:self.finalDate
+                                                                                startCallback:^{
+                                                                                    
+                                                                                }
+                                                                                  endCallback:^{
+                                                                                      
+                                                                                  }];
+    }
+    return _circularTimer;
 }
 @end

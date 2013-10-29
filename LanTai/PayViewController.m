@@ -431,6 +431,7 @@
             }
             
         }else if([product objectForKey:@"products"]){
+            //套餐卡
             z += 1;
             for (NSDictionary *pro in [product objectForKey:@"products"]) {
                 if([[pro objectForKey:@"selected"] intValue]==0) {//被选中

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0E03C3AE181E0A320006D3BB /* CircularTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E03C3AD181E0A320006D3BB /* CircularTimer.m */; };
 		0E1A4C8318112E5C00918602 /* SVPullToRefresh.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0E1A4C8018112E5C00918602 /* SVPullToRefresh.bundle */; };
 		0E1A4C8418112E5C00918602 /* SVPullToRefresh.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E1A4C8218112E5C00918602 /* SVPullToRefresh.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		0E38520C181501DC0076E5E6 /* StationModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E38520B181501DC0076E5E6 /* StationModel.m */; };
@@ -109,6 +110,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0E03C3AC181E0A320006D3BB /* CircularTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CircularTimer.h; sourceTree = "<group>"; };
+		0E03C3AD181E0A320006D3BB /* CircularTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CircularTimer.m; sourceTree = "<group>"; };
 		0E1A4C8018112E5C00918602 /* SVPullToRefresh.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = SVPullToRefresh.bundle; sourceTree = "<group>"; };
 		0E1A4C8118112E5C00918602 /* SVPullToRefresh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVPullToRefresh.h; sourceTree = "<group>"; };
 		0E1A4C8218112E5C00918602 /* SVPullToRefresh.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVPullToRefresh.m; sourceTree = "<group>"; };
@@ -267,6 +270,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0E03C3AB181E0A260006D3BB /* timer */ = {
+			isa = PBXGroup;
+			children = (
+				0E03C3AC181E0A320006D3BB /* CircularTimer.h */,
+				0E03C3AD181E0A320006D3BB /* CircularTimer.m */,
+			);
+			name = timer;
+			sourceTree = "<group>";
+		};
 		0E1A4C7F18112E5400918602 /* SVPullToRefresh */ = {
 			isa = PBXGroup;
 			children = (
@@ -333,6 +345,7 @@
 		0E9CCBE6180D347000BA469B /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				0E03C3AB181E0A260006D3BB /* timer */,
 				0E1A4C7F18112E5400918602 /* SVPullToRefresh */,
 				0E9CCBFC180D355C00BA469B /* pinyin.h */,
 				0E9CCBFD180D355C00BA469B /* pinyin.c */,
@@ -678,6 +691,7 @@
 				0EA2E038180E338400B4FE02 /* PlateVViewController.m in Sources */,
 				0EA2E063180E811A00B4FE02 /* UITextView+Border.m in Sources */,
 				0EA2E040180E4E9800B4FE02 /* InitViewController.m in Sources */,
+				0E03C3AE181E0A320006D3BB /* CircularTimer.m in Sources */,
 				0E9CCBF0180D34A000BA469B /* Utils.m in Sources */,
 				0E9CCBD1180D343800BA469B /* AHAlertView.m in Sources */,
 				0E9CCC18180D416D00BA469B /* ProductHeader.m in Sources */,
@@ -773,6 +787,7 @@
 				INFOPLIST_FILE = "LanTai/LanTai-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "A5804E38-64BF-4A8E-B3A0-48D46957042E";
 				TARGETED_DEVICE_FAMILY = 2;
 				WRAPPER_EXTENSION = app;
 			};
@@ -782,7 +797,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "LanTai/LanTai-Prefix.pch";
 				INFOPLIST_FILE = "LanTai/LanTai-Info.plist";
