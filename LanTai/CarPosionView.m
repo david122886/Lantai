@@ -89,14 +89,13 @@
     if (isEmpty) {
         [self.titileBackView setImage:[[UIImage imageNamed:@"posinTitlegraybg.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 20, 0)]];
         self.circularTimer.hidden = YES;
-        self.circularTimer = nil;
-        [self.circularTimer removeFromSuperview];
         self.carView.state = CARNOTHING;
         self.serveNameLabel.text = nil;
         self.posinDateLabel.text = @"00:00";
         self.serveNameLabel.text = nil;
         self.posinIDLabel.textColor = [UIColor darkGrayColor];
         self.posinDateLabel.textColor = [UIColor darkGrayColor];
+        [self.circularTimer stop];
     }else{
         self.posinDateLabel.text = self.posionDate;
         self.carView.state = CARBEGINNING;
@@ -106,9 +105,13 @@
 
         self.posinIDLabel.textColor = [UIColor whiteColor];
         self.posinDateLabel.textColor = [UIColor whiteColor];
+        self.circularTimer.initialDate = self.initialDate;
+        self.circularTimer.finalDate = self.finalDate;
+        [self.circularTimer setup];
     }
     [self.coverLabel setHidden:!isEmpty];
     [self.carImageView setHidden:!isEmpty];
+     [self.circularTimer setHidden:isEmpty];
     
 }
 
@@ -128,21 +131,6 @@
         [dateformat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
         self.initialDate = [dateformat dateFromString:car.serviceStartTime];
         self.finalDate = [dateformat dateFromString:car.serviceEndTime];
-        
-        self.circularTimer = [[CircularTimer alloc] initWithPosition:CGPointMake(-5.0f, -2.0f)
-                                                              radius:round(15)
-                                                      internalRadius:round(12)
-                                                   circleStrokeColor:[UIColor colorWithRed:0.5765 green:0.0078 blue:0.0196 alpha:1.0]
-                                             activeCircleStrokeColor:[UIColor whiteColor]
-                                                         initialDate:self.initialDate
-                                                           finalDate:self.finalDate
-                                                       startCallback:^{
-                                                           
-                                                       }
-                                                         endCallback:^{
-                                                             
-                                                         }];
-        [self.circularTimer willRun];
         [self.posionDateImageView addSubview:self.circularTimer];
 
         self.posionServeName = car.serviceName;
@@ -182,5 +170,24 @@
     }
     return @"00:00";
     
+}
+
+-(CircularTimer *)circularTimer{
+    if (!_circularTimer) {
+        _circularTimer = [[CircularTimer alloc] initWithPosition:CGPointMake(-5.0f, -2.0f)
+                                                                                       radius:round(15)
+                                                                               internalRadius:round(12)
+                                                                            circleStrokeColor:[UIColor colorWithRed:0.5765 green:0.0078 blue:0.0196 alpha:1.0]
+                                                                      activeCircleStrokeColor:[UIColor whiteColor]
+                                                                                  initialDate:self.initialDate
+                                                                                    finalDate:self.finalDate
+                                                                                startCallback:^{
+                                                                                    
+                                                                                }
+                                                                                  endCallback:^{
+                                                                                      
+                                                                                  }];
+    }
+    return _circularTimer;
 }
 @end

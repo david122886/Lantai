@@ -13,7 +13,7 @@
 #import "CarCellView.h"
 #import "ServeItemView.h"
 #import "DRVerticalLabel.h"
-
+#import "DRScrollView.h"
 @class ShaixuanView;
 @class PlateVViewController;
 @protocol BZGFormFieldDelegate;
@@ -21,6 +21,7 @@
 @interface LanTaiMenuMainController : UIViewController<UIScrollViewDelegate,UITextFieldDelegate,UITableViewDataSource,UITableViewDelegate,BZGFormFieldDelegate,CarCellViewDelegate,ServeItemViewDelegate>
 @property (weak, nonatomic) IBOutlet UIScrollView *leftTopScrollView;
 @property (weak, nonatomic) IBOutlet UIScrollView *bottomLeftScrollView;
+@property (weak, nonatomic) IBOutlet DRScrollView *middleScrollView;
 
 @property (weak, nonatomic) IBOutlet UIView *leftBackgroundView;
 @property (weak, nonatomic) IBOutlet UIView *touchView;

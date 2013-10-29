@@ -18,10 +18,12 @@ activeCircleStrokeColor:(UIColor *)activeCircleStrokeColor
          startCallback:(void (^)(void))startBlock
            endCallback:(void (^)(void))endBlock;
 
+@property (nonatomic, strong) NSDate *initialDate;
+@property (nonatomic, strong) NSDate *finalDate;
 - (BOOL)isRunning;
 - (BOOL)willRun;
 - (void)stop;
 - (NSTimeInterval)intervalLength;
 - (NSTimeInterval)runningElapsedTime;
-
+- (void)setup;
 @end

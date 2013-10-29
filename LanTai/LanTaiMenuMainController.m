@@ -29,9 +29,10 @@
 @property (nonatomic,strong) NSMutableArray *finishedCarsArr;
 @property (nonatomic,strong) NSMutableArray *serveItemsArr;
 @property (nonatomic,strong) NSMutableArray *posionItemArr;
+@property (nonatomic,strong) NSMutableArray *stationArray;
 @property (nonatomic,strong) CarCellView *moviedView;
 @property (nonatomic,strong) CarPosionView *moviePosionView;
-@property (nonatomic,strong) NSMutableArray *stationArray;
+@property (nonatomic,assign) BOOL isScrollMiddleScrollView;
 @end
 
 @implementation LanTaiMenuMainController
@@ -251,13 +252,7 @@
 
 -(void)setBegningScrollViewContextWithPosionCount:(NSArray *)array {
     [self.posionItemArr removeAllObjects];
-    int ccount = 0;
-    if (array.count >6) {
-        ccount=6;
-    }else {
-        ccount = array.count;
-    }
-    for (int index = 0; index < ccount; index++) {
+    for (int index = 0; index < [array count]; index++) {
         CarPosionView *view = [[CarPosionView alloc] init];
         view.tag = -1;
         StationModel *ss = (StationModel *)[array objectAtIndex:index];
@@ -268,9 +263,11 @@
         view.backgroundColor = [UIColor whiteColor];
         view.layer.shadowColor = [UIColor darkGrayColor].CGColor;
         view.layer.shadowOffset = (CGSize){0,2};
-        [self.leftBackgroundView addSubview:view];
+//        [self.leftBackgroundView addSubview:view];
+        [self.middleScrollView addSubview:view];
         [self.posionItemArr addObject:view];
     }
+    self.middleScrollView.contentSize = (CGSize){(CELL_POSION_WIDHT+CELL_PADDING*2)*([array count]%2==0?[array count]/2:([array count]/2+1)),CGRectGetHeight(self.middleScrollView.frame)};
 }
 
 -(void)setFinishedScrollViewContext{
@@ -334,14 +331,17 @@
 
 -(CGRect)getBeginningScrollViewItemRectWithIndex:(int)index{
     
+//    float height = (708 -CGRectGetHeight(self.bottomLeftScrollView.frame)*2 - CELL_PADDING*3)/2;
+//    return (CGRect){SCROLLVIEW_LEFT_PADDING+CELL_PADDING+(CELL_POSION_WIDHT+CELL_PADDING)*(index/2),CGRectGetMaxY(self.leftTopScrollView.frame)+CELL_PADDING*2+(height+CELL_PADDING)*(index%2),CELL_POSION_WIDHT,height};
     float height = (708 -CGRectGetHeight(self.bottomLeftScrollView.frame)*2 - CELL_PADDING*3)/2;
-    return (CGRect){SCROLLVIEW_LEFT_PADDING+CELL_PADDING+(CELL_POSION_WIDHT+CELL_PADDING)*(index/2),CGRectGetMaxY(self.leftTopScrollView.frame)+CELL_PADDING*2+(height+CELL_PADDING)*(index%2),CELL_POSION_WIDHT,height};
+    return (CGRect){SCROLLVIEW_LEFT_PADDING+CELL_PADDING+(CELL_POSION_WIDHT+CELL_PADDING)*(index/2),CELL_PADDING*2+(height+CELL_PADDING)*(index%2),CELL_POSION_WIDHT,height};
 }
 
 -(void)exchangeBeginningCarCellViewPositionWithTouchView:(CarCellView*)touchView{
     for (CarPosionView *subView in self.posionItemArr) {
         //        NSLog(@"%@,%@",NSStringFromCGRect(subView.frame),NSStringFromCGRect(touchView.frame));
-        if (CGRectContainsRect(subView.frame,touchView.frame) && subView.posionID != touchView.posionID) {
+        CGRect scrollRect = [self.leftBackgroundView convertRect:touchView.frame toView:self.middleScrollView];
+        if (CGRectContainsRect(subView.frame,scrollRect) && subView.posionID != touchView.posionID) {
             
             CarObj *obj1 = [self.beginningCarsDic objectForKey:[NSString stringWithFormat:@"%d",touchView.posionID]];
             CarObj *obj2 = [self.beginningCarsDic objectForKey:[NSString stringWithFormat:@"%d",subView.posionID]];
@@ -723,22 +723,25 @@
 }
 
 - (IBAction)touchDragGesture:(UIPanGestureRecognizer *)sender {
-    CGPoint point = [sender locationInView:self.leftBackgroundView];
-    //    NSLog(@"%@",NSStringFromCGPoint(point));
+    CGPoint point = [sender locationInView:self.middleScrollView];
     if (sender.state == UIGestureRecognizerStateBegan) {
-        for (UIView *subView in [self.leftBackgroundView subviews]) {
-            if ([subView isKindOfClass:[CarPosionView class]] && CGRectContainsPoint(subView.frame, point) && ![((CarPosionView*)subView) isEmpty]) {
-                CarCellView *cellView = [[((CarPosionView*)subView) carView] copyCarCellView];
-                self.moviedView = cellView;
-                self.moviePosionView = (CarPosionView*)subView;
-                [self.leftBackgroundView addSubview:self.moviedView];
-                CGRect startRect = [subView convertRect:cellView.frame fromView:self.leftBackgroundView];
-                self.moviedView.beforeMoiveRect = startRect;
-                self.moviedView.parentViewRect = subView.frame;
-                self.moviedView.posionID = [(CarPosionView*)subView posionID];
-                [self.moviedView setHidden:YES];
-                self.moviePosionView.isEmpty = YES;
-                break;
+        for (UIView *subView in [self.middleScrollView subviews]) {
+            if ([subView isKindOfClass:[CarPosionView class]]) {
+                CarCellView *cellView = [((CarPosionView*)subView) carView];
+                CGRect carRect = [subView convertRect:cellView.frame toView:self.middleScrollView];
+                if ([subView isKindOfClass:[CarPosionView class]] && CGRectContainsPoint(carRect, point) && ![((CarPosionView*)subView) isEmpty]) {
+                    
+                    self.moviedView = [cellView copyCarCellView];
+                    self.moviePosionView = (CarPosionView*)subView;
+                    self.moviedView.posionID = self.moviePosionView.posionID;
+                    [self.leftBackgroundView addSubview:self.moviedView];
+                    self.moviedView.beforeMoiveRect = carRect;
+                    self.moviedView.parentViewRect = subView.frame;
+                    [self.moviedView setHidden:YES];
+                    self.moviePosionView.isEmpty = YES;
+                    self.isScrollMiddleScrollView = NO;
+                    break;
+                }
             }
         }
     }else
@@ -761,11 +764,35 @@
             
         }else{
             if (self.moviedView) {
-                self.moviedView.center = point;
-                [self.moviedView setHidden:NO];
+                CGPoint movepoint = [sender locationInView:self.leftBackgroundView];
+                if (CGRectGetMaxX(self.leftBackgroundView.frame) < CGRectGetMaxX(self.moviedView.frame) && !self.isScrollMiddleScrollView) {
+                    [self.middleScrollView startScrollContentWithStep:CELL_WIDHT/4];
+                    self.isScrollMiddleScrollView = YES;
+                }else
+                if (CGRectGetMinX(self.moviedView.frame) <= 0 && !self.isScrollMiddleScrollView) {
+                    [self.middleScrollView startScrollContentWithStep:-CELL_WIDHT/4];
+                    self.isScrollMiddleScrollView = YES;
+                }else
+                if (self.isScrollMiddleScrollView) {
+                    if (movepoint.x < self.moviedView.center.x && CGRectGetMaxX(self.leftBackgroundView.frame) <= CGRectGetMaxX(self.moviedView.frame)) {
+                        [self.middleScrollView stopScroll];
+                        self.moviedView.center = movepoint;
+                        self.isScrollMiddleScrollView = NO;
+                    }else
+                    if (movepoint.x > self.moviedView.center.x && CGRectGetMinX(self.moviedView.frame) <= 0) {
+                        [self.middleScrollView stopScroll];
+                        self.moviedView.center = movepoint;
+                        self.isScrollMiddleScrollView = NO;
+                    }else{
+                        self.moviedView.center = (CGPoint){(CGRectGetMaxX(self.moviedView.frame) < CGRectGetMaxX(self.leftBackgroundView.frame) || CGRectGetMinX(self.moviedView.frame) >=0)?movepoint.x:self.moviedView.center.x,movepoint.y};
+                    }
+                }
+                else{
+                    self.moviedView.center = movepoint;
+                    [self.moviedView setHidden:NO];
+                }
             }
         }
-    
 }
 
 #pragma mark network
@@ -1022,6 +1049,27 @@ static NSMutableDictionary *finish_dic = nil;
     [MBProgressHUD hideHUDForView:self.view animated:YES];
 }
 #pragma mark --
+
+//#pragma mark touch
+//-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
+//    CGPoint point = [[touches anyObject] locationInView:self.leftBackgroundView];
+//    [self.middleScrollView.carCellView removeFromSuperview];
+//    [self.leftBackgroundView addSubview:self.middleScrollView.carCellView];
+//    [self.leftBackgroundView bringSubviewToFront:self.middleScrollView.carCellView];
+//    self.middleScrollView.carCellView.center = point;
+//}
+//
+//-(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event{
+//    CGPoint point = [[touches anyObject] locationInView:self.leftBackgroundView];
+//    self.middleScrollView.carCellView.center = point;
+//    NSLog(@"LanTaiMenuMainController:touchesMoved");
+//}
+//
+//-(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{
+//    CGPoint point = [[touches anyObject] locationInView:self.leftBackgroundView];
+//    
+//}
+//#pragma mark --
 
 #pragma mark ServeItemViewDelegate
 
