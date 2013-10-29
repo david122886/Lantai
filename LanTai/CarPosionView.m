@@ -128,7 +128,6 @@
         [dateformat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
         self.initialDate = [dateformat dateFromString:car.serviceStartTime];
         self.finalDate = [dateformat dateFromString:car.serviceEndTime];
-        DLog(@"%@,%@",self.finalDate,self.initialDate);
         
         self.circularTimer = [[CircularTimer alloc] initWithPosition:CGPointMake(-5.0f, -2.0f)
                                                               radius:round(15)

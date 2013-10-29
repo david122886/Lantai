@@ -288,8 +288,7 @@
 #pragma mark - 提交输入的验证码
 -(void)code {
     STHTTPRequest *r = [STHTTPRequest requestWithURLString:[NSString stringWithFormat:@"%@%@",kHost,kSendVerifyCode]];
-//    [r setPOSTDictionary:[NSDictionary dictionaryWithObjectsAndKeys:self.txtPhone.text,@"mobilephone",[order objectForKey:@"price"],@"price",self.txtCode.text,@"verify_code",[order objectForKey:@"content"],@"content",[DataService sharedService].store_id,@"store_id", nil]];
-    
+
     [r setPOSTDictionary:@{@"mobilephone": self.txtPhone.text?:@"",@"price":[order objectForKey:@"price"]?:@"",@"verify_code":self.txtCode.text?:@"",@"content":[order objectForKey:@"content"]?:@"",@"store_id":[DataService sharedService].store_id?:@""}];
     [r setPostDataEncoding:NSUTF8StringEncoding];
     NSLog(@"%@",r.POSTDictionary);
