@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "CarObj.h"
 #import "CarCellView.h"
-#import "CircularTimer.h"
+#import "CustomTimeView.h"
 @interface CarPosionView : UIView
 @property(nonatomic,assign) int posionID;
 @property(nonatomic,strong) NSString *posinName;
@@ -18,9 +18,9 @@
 @property(nonatomic,strong) NSString *posionServeName;
 @property(nonatomic,assign)BOOL isEmpty;
 @property(nonatomic,strong) CarCellView *carView;
+@property(nonatomic,strong) CustomTimeView *cusTime;
+@property (nonatomic,strong) NSTimer *timer;
+@property (nonatomic,strong) NSString *timeStr;
 
-@property (nonatomic, strong) CircularTimer *circularTimer;
-@property (nonatomic, strong) NSDate *initialDate;
-@property (nonatomic, strong) NSDate *finalDate;
 -(void)setCarObj:(CarObj*)car;
 @end
