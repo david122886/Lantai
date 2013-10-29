@@ -166,6 +166,11 @@
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </view>
+                                    <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="En1-rU-Yru" userLabel="middleScrollview" customClass="DRScrollView">
+                                        <rect key="frame" x="0.0" y="144" width="828" height="440"/>
+                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                    </scrollView>
                                     <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" alpha="0.79999999999999982" contentMode="scaleToFill" bounces="NO" id="B6s-ys-3uy" userLabel="Scroll View1">
                                         <rect key="frame" x="0.0" y="0.0" width="828" height="144"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
@@ -219,6 +224,7 @@
                         <outlet property="leftBackgroundView" destination="8kV-1Z-qPU" id="m9D-fa-H2p"/>
                         <outlet property="leftMiddlebgView" destination="uAq-XF-htU" id="aZw-Jv-FFM"/>
                         <outlet property="leftTopScrollView" destination="B6s-ys-3uy" id="1UO-2G-2da"/>
+                        <outlet property="middleScrollView" destination="En1-rU-Yru" id="yNg-uX-WLx"/>
                         <outlet property="middleVerticalLabel" destination="0cj-Ds-ocE" id="bIY-58-X6x"/>
                         <outlet property="orderTable" destination="Lgw-xB-Fpn" id="yiD-WX-ZKq"/>
                         <outlet property="rightBackgroundView" destination="7ki-ct-ohR" id="mgT-d3-wzY"/>

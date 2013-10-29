@@ -81,6 +81,7 @@
 		0EA2E082180EA2B600B4FE02 /* refresh.png in Resources */ = {isa = PBXBuildFile; fileRef = 0EA2E07C180EA2B600B4FE02 /* refresh.png */; };
 		0EA2E083180EA2B600B4FE02 /* shareBt.png in Resources */ = {isa = PBXBuildFile; fileRef = 0EA2E07D180EA2B600B4FE02 /* shareBt.png */; };
 		0EFBFDA21811184D00569A83 /* view_bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 0EFBFDA11811184D00569A83 /* view_bg.png */; };
+		630EB667181E31B200E861E8 /* DRScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 630EB666181E31B200E861E8 /* DRScrollView.m */; };
 		63268F7F180CDC8B006E06E3 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63268F7E180CDC8B006E06E3 /* UIKit.framework */; };
 		63268F81180CDC8B006E06E3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63268F80180CDC8B006E06E3 /* Foundation.framework */; };
 		63268F83180CDC8B006E06E3 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63268F82180CDC8B006E06E3 /* CoreGraphics.framework */; };
@@ -210,6 +211,8 @@
 		0EA2E07C180EA2B600B4FE02 /* refresh.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = refresh.png; sourceTree = "<group>"; };
 		0EA2E07D180EA2B600B4FE02 /* shareBt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = shareBt.png; sourceTree = "<group>"; };
 		0EFBFDA11811184D00569A83 /* view_bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = view_bg.png; sourceTree = "<group>"; };
+		630EB665181E31B200E861E8 /* DRScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DRScrollView.h; sourceTree = "<group>"; };
+		630EB666181E31B200E861E8 /* DRScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DRScrollView.m; sourceTree = "<group>"; };
 		63268F7B180CDC8B006E06E3 /* LanTai.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LanTai.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		63268F7E180CDC8B006E06E3 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		63268F80180CDC8B006E06E3 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -522,6 +525,8 @@
 				0E9CCC17180D416D00BA469B /* ProductHeader.m */,
 				637EE7A618112A2D00C8CE6F /* DRVerticalLabel.h */,
 				637EE7A718112A2D00C8CE6F /* DRVerticalLabel.m */,
+				630EB665181E31B200E861E8 /* DRScrollView.h */,
+				630EB666181E31B200E861E8 /* DRScrollView.m */,
 			);
 			name = views;
 			sourceTree = "<group>";
@@ -554,6 +559,11 @@
 			attributes = {
 				LastUpgradeCheck = 0460;
 				ORGANIZATIONNAME = david;
+				TargetAttributes = {
+					63268F7A180CDC8B006E06E3 = {
+						DevelopmentTeam = 63FVWL9TD6;
+					};
+				};
 			};
 			buildConfigurationList = 63268F76180CDC8B006E06E3 /* Build configuration list for PBXProject "LanTai" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -656,6 +666,7 @@
 				0E1A4C8418112E5C00918602 /* SVPullToRefresh.m in Sources */,
 				0E9CCBDC180D345800BA469B /* STHTTPRequest.m in Sources */,
 				0E9CCC20180D4D9D00BA469B /* ServiceModel.m in Sources */,
+				630EB667181E31B200E861E8 /* DRScrollView.m in Sources */,
 				0E9CCC1C180D41E900BA469B /* PayStyleViewController.m in Sources */,
 				0E9CCC0F180D415100BA469B /* ServiceCell.m in Sources */,
 				0E9CCC07180D3DCC00BA469B /* PayViewController.m in Sources */,
@@ -770,7 +781,7 @@
 		63268FA0180CDC8B006E06E3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "LanTai/LanTai-Prefix.pch";
