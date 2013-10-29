@@ -89,13 +89,13 @@
     if (isEmpty) {
         [self.titileBackView setImage:[[UIImage imageNamed:@"posinTitlegraybg.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 20, 0)]];
         self.cusTime.hidden = YES;
-        [self.cusTime stop];
         self.carView.state = CARNOTHING;
         self.serveNameLabel.text = nil;
-        self.posinDateLabel.text = @"00:00";
+        self.posinDateLabel.text = @"00:00:00";
         self.serveNameLabel.text = nil;
         self.posinIDLabel.textColor = [UIColor darkGrayColor];
         self.posinDateLabel.textColor = [UIColor darkGrayColor];
+        [self.cusTime stop];
     }else{
         self.posinDateLabel.text = self.posionDate;
         self.carView.state = CARBEGINNING;
@@ -105,10 +105,11 @@
 
         self.posinIDLabel.textColor = [UIColor whiteColor];
         self.posinDateLabel.textColor = [UIColor whiteColor];
-       _cusTime.timeLab = self.posinDateLabel;
-        self.cusTime.dateString = self.timeStr;
-        [self.cusTime setup];
         
+        self.cusTime.timeLab = self.posinDateLabel;
+        self.cusTime.startTime = self.timeStart;
+        self.cusTime.endTime = self.timeEnd;
+        [self.cusTime setup]; 
     }
     [self.coverLabel setHidden:!isEmpty];
     [self.carImageView setHidden:!isEmpty];
@@ -126,10 +127,9 @@
         self.carView.carNumber = car.carPlateNumber;
         self.carView.state = CARBEGINNING;
 
-        self.timeStr = [NSString stringWithFormat:@"%@",car.serviceEndTime];
-//        self.cusTime = [self circularTimer];
-//        [self.titileBackView addSubview:self.cusTime];
-        
+        self.timeStart = [NSString stringWithFormat:@"%@",car.serviceStartTime];
+        self.timeEnd = [NSString stringWithFormat:@"%@",car.serviceEndTime];
+
         self.posionServeName = car.serviceName;
         self.isEmpty = NO;
     }else{
@@ -154,8 +154,8 @@
 
 -(CustomTimeView *)cusTime {
     if (!_cusTime) {
-        _cusTime = [[CustomTimeView alloc]initWithDateStr:self.timeStr andFrame:self.posinDateLabel.frame];
-        
+        _cusTime = [[CustomTimeView alloc]init];
+ 
     }
     return _cusTime;
 }

@@ -16,6 +16,7 @@
     return (AppDelegate *)([UIApplication sharedApplication].delegate);
 }
 -(void)showView {
+    self.window.rootViewController = nil;
     self.window.rootViewController = self.navigationView;
     self.navigationView = nil;
 }

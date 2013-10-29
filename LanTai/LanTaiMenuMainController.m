@@ -251,6 +251,9 @@
 }
 
 -(void)setBegningScrollViewContextWithPosionCount:(NSArray *)array {
+    for (UIView *posion in self.posionItemArr) {
+        [posion removeFromSuperview];
+    }
     [self.posionItemArr removeAllObjects];
     for (int index = 0; index < [array count]; index++) {
         CarPosionView *view = [[CarPosionView alloc] init];
@@ -1049,28 +1052,6 @@ static NSMutableDictionary *finish_dic = nil;
     [MBProgressHUD hideHUDForView:self.view animated:YES];
 }
 #pragma mark --
-
-//#pragma mark touch
-//-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
-//    CGPoint point = [[touches anyObject] locationInView:self.leftBackgroundView];
-//    [self.middleScrollView.carCellView removeFromSuperview];
-//    [self.leftBackgroundView addSubview:self.middleScrollView.carCellView];
-//    [self.leftBackgroundView bringSubviewToFront:self.middleScrollView.carCellView];
-//    self.middleScrollView.carCellView.center = point;
-//}
-//
-//-(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event{
-//    CGPoint point = [[touches anyObject] locationInView:self.leftBackgroundView];
-//    self.middleScrollView.carCellView.center = point;
-//    NSLog(@"LanTaiMenuMainController:touchesMoved");
-//}
-//
-//-(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{
-//    CGPoint point = [[touches anyObject] locationInView:self.leftBackgroundView];
-//    
-//}
-//#pragma mark --
-
 #pragma mark ServeItemViewDelegate
 
 -(void)serveItemView:(ServeItemView *)itemView didSelectedItemAtIndexPath:(NSIndexPath *)path{
@@ -1306,7 +1287,6 @@ static NSString *service_id = nil;
             if ([str isEqualToString:txtField.text] || ([[str lowercaseString] isEqualToString:txtField.text])) {
                 NSArray *array = [[DataService sharedService].sectionArray objectAtIndex:i];
                 if (array.count>0 && self.sxView == nil) {
-                    CGRect rect = [self.rightBackgroundView convertRect:self.carNumberTextField.frame toView:self.view];
                     self.sxView = [[ShaixuanView alloc]initWithNibName:@"ShaixuanView" bundle:nil];
                     self.sxView.view.frame = CGRectMake(827 +self.carNumberTextField.frame.origin.x, 45+self.carNumberTextField.frame.origin.y, 0, 0);
                     self.sxView.dataArray = array;
@@ -1332,5 +1312,8 @@ static NSString *service_id = nil;
         }];
     }
 }
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    [self.carNumberTextField.textField resignFirstResponder];
 
+}
 @end

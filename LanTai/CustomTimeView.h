@@ -10,11 +10,12 @@
 
 @interface CustomTimeView : UIView
 
-@property (nonatomic, strong) NSString *dateString;
 @property (nonatomic, strong) NSTimer *timer;
 @property (nonatomic, strong) UILabel *timeLab;
 
-- (id)initWithDateStr:(NSString *)dateStr andFrame:(CGRect)frame;
+@property (nonatomic, strong) NSString *startTime;
+@property (nonatomic, strong) NSString *endTime;
+- (id)init;
 - (void)setup;
 - (void)stop;
 @end

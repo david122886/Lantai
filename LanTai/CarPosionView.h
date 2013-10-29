@@ -19,8 +19,7 @@
 @property(nonatomic,assign)BOOL isEmpty;
 @property(nonatomic,strong) CarCellView *carView;
 @property(nonatomic,strong) CustomTimeView *cusTime;
-@property (nonatomic,strong) NSTimer *timer;
-@property (nonatomic,strong) NSString *timeStr;
-
+@property (nonatomic,strong) NSString *timeStart;
+@property (nonatomic,strong) NSString *timeEnd;
 -(void)setCarObj:(CarObj*)car;
 @end

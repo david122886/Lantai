@@ -8,7 +8,7 @@
 //
 
 
-//#define kHost @"http://192.168.0.250:3001/api"
+//#define kHost @"http://192.168.2.29:3001/api"
 #define kHost @"http://116.255.135.175:3004/api"
 
 #define kNewPay @"/new_app_orders/pay_order"
