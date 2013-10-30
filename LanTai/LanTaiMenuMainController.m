@@ -1202,11 +1202,11 @@ static NSString *service_id = nil;
     NSDictionary *dic = [notification object];
     NSString *str = [dic objectForKey:@"name"];
     self.carNumberTextField.textField.text = str;
-    [UIView animateWithDuration:0.35 animations:^{
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         self.plateView.view.transform = CGAffineTransformMakeScale(1.3, 1.3);
         self.plateView.view.alpha = 0.0;
-    } completion:^(BOOL finished) {
-        if (finished) {
+        dispatch_async(dispatch_get_main_queue(), ^{
             [self.plateView.view removeFromSuperview];
             self.plateView = nil;
             
@@ -1217,9 +1217,8 @@ static NSString *service_id = nil;
             [hud showWhileExecuting:@selector(getServiceCar) onTarget:self withObject:nil animated:YES];
             hud.labelText = @"正在玩命加载...";
             [self.view addSubview:hud];
-        }
-    }];
-    
+        });
+    }); 
 }
 #pragma mark -
 #pragma mark - 匹配车牌
